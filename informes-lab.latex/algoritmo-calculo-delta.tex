@@ -1,0 +1,238 @@
+\documentclass[a4paper,headsepline,footsepline,draft=false]{scrartcl}
+
+\input{packages}
+
+\lstset{language=sql,numbers=none,frame=none,captionpos=b}
+
+% Font = Times New Roman
+\usepackage{times}
+%\renewcommand*\rmdefault{ppl}
+%\renewcommand*\sfdefault{pag}
+%\renewcommand{\familydefault}{\sfdefault}
+
+\clearpairofpagestyles
+\ohead{Informe: \today}
+\ofoot{Página \pagemark}
+
+%\ifoot{Pie}
+%\ofoot{Página \pagemark}
+
+%----------------------------------------------------------------------------------------
+%	DEFINE EL FLAG BORRADOR para imprimir, por ejemplo, la lista de TO-DO
+%----------------------------------------------------------------------------------------
+
+%\def\borrador{}
+
+\begin{document}
+
+% Title Page
+\title{Mejoras al algoritmo de cálculo de Deltas ($\Delta$)}
+\author{Ing. Martín G. Casatti \\ e-mail: mcasatti@gmail.com}
+\date{\today}
+\maketitle
+%\tableofcontents
+%\newpage
+\thispagestyle{headings}
+
+\begin{abstract}
+	Se presenta el algoritmo original para el cálculo de $\Delta$, o sea la distancia entre un concepto dado en una respuesta y el mismo concepto en la respuesta base, así como un algoritmo alternativo, más eficiente, para realizar dicha tarea.
+\end{abstract}
+
+\ifdefined\borrador
+\section*{Foreword}
+When writing a scientific report it is very important to think carefully how to organize it.
+
+Most reports and scientific papers follow the so called IMRAD structure,that is they are subdivided in four sections: \textbf{I}ntroduction, \textbf{M}ethods, \textbf{R}esults \textbf{A}nd \textbf{D}iscussion.
+
+This is a well-tried format and an efficient way of writing a report, it is highly recommended that you stick to it: 
+
+\begin{quote}
+	The goal of a report or a scientific paper is not to impress the readers by poetic language but to transfer facts and new insights as clearly as possible.
+\end{quote}
+
+More importantly structuring your paper helps you understand more about the topic you are examining.
+\fi
+
+\section{Introducción}
+
+El primer paso para la interpretación de la respuesta a una pregunta de examen, provista por un alumno, es interpretar los conceptos que intervienen en la misma sin coartar su capacidad expresiva. Ahí nos encontramos con un problema omnipresente en el idioma castellano, \textbf{las equivalencias}. 
+
+Existen múltiples palabras en castellano que pueden utilizarse para expresar el mismo concepto. Y si bien las relaciones conceptuales en una materia técnica como es PPR son concretas y simples, el alumno puede utilizar diversos sinónimos y términos equivalentes para expresar una respuesta válida.
+
+Existe además la complejidad agregada de que si bien un término equivalente puede expresar el concepto que se pide como respuesta, no necesariamente los términos tienen que ser intercambiables como iguales.
+
+Surge de esta manera la necesidad de ponderar qué tan exacta es una equivalencia, con respecto al concepto que representa.
+
+La gestión de equivalencia tiene entonces dos objetivos complementarios:
+
+\begin{enumerate}
+	\item Registrar términos equivalentes asociados a un concepto dado
+	\item Indicar el grado de exactitud con el que representan a dicho concepto
+\end{enumerate}
+
+\ifdefined\borrador
+\begin{lstlisting}[title={Prueba de titulo},caption={Prueba de caption},captionpos=b,frame=shadowbox]
+#include<stdio.h>
+#include<iostream>
+// A comment
+int main(void)
+{
+	printf("Hello World\n");
+	return 0;
+}
+\end{lstlisting}
+\fi
+
+\begin{tikzpicture}
+%\GraphInit[vstyle=Normal];
+%\draw[help lines] (0,0) grid (10,6);
+\SetGraphUnit{2}
+%\SetVertexNormal[MinSize=35pt]
+%\tikzset{EdgeStyle/.style = {->,bend left=20,-latex}}
+%\tikzset{newstyle/.style = {->,bend left=20,-latex,dashed}}
+%
+%
+%\Vertex [Math,L=C_1]{C1}
+%\NOEA [Math,L=C_2](C1) {C2}
+%\SOEA [Math,L=C_{n-1}](C2) {C3}
+%\NOEA [Math,L=C_n](C3) {C4}
+%
+%\Edge[label=$R_{1,2}$,style={above,pos=0.3}](C1)(C2)
+%\Edge[label=$R_{2,3}$,style={below,pos=0.3,dashed}](C2)(C3)
+%\Edge[label=$R_{n-1,n}$,style={below,pos=0.7}](C3)(C4)
+
+\node[rectangle split, rectangle split parts=4, draw, font=\small, rectangle split part align={center}] at (0,0) (t1)
+{
+	\textbf{Clase}
+	\nodepart{two} Objeto \hspace*{4ex} 0.9
+	\nodepart{three} Entidad \hspace*{4ex} 0.5
+	\nodepart{four} Modelo \hspace*{4ex} 0.3
+};
+
+\node[rectangle split, rectangle split parts=3, draw, font=\small] at (5,1) (t2)
+{	
+	\textbf{Atributo}
+	\nodepart{two} Campo \hspace*{4ex} 0.5
+	\nodepart{three} Propiedad \hspace*{4ex} 0.8
+};
+
+\path [->,thick] (t1) edge[above,bend right] node {tiene} (t2);
+
+\end{tikzpicture}
+
+\section{Métodos}
+
+La base de datos OrientDB\cite{orientdb-data-types} permite almacenar, asociado a un nodo, diversos tipos de datos además de los tipos estándar string, entero, float, etc.
+
+Dentro de los tipos compuestos que se pueden almacenar, uno en particular es adecuado para el tratamiento de las equivalencias. El tipo ``Embedded Map'' permite el almacenamiento de pares \texttt{<String, Object>} que es adecuado para la representación de las equivalencias, según el esquema mencionado anteriormente (\texttt{<String,Float>}).
+
+Primeramente se deben crear las estructuras correspondientes con las siguientes sentencias (el SQL utilizado es el dialecto específico de OrientDB) tal como se ve en el Listado\ref{lst:creaestructuras}. 
+
+\begin{lstlisting}[caption={Creación de estructuras},label=lst:creaestructuras]
+-- Se crea la clase Concepto que hereda de V (Vertex. Nodo)
+create class Concepto extends V;
+-- Se crea la propiedad Nombre, de tipo string
+create property Concepto.Nombre string;
+-- Se crea la propiedad Usuario, de tipo string
+create property Concepto.Usuario string;
+-- Se crea la propiedad Actualidado, de tipo Date
+create property Concepto.Actualizado Date;
+-- Se crea la propiedad Equivalencias, un Map Embebido en el Nodo, 
+-- con Key = string y Value = Float
+create property Concepto.Equivalencias EMBEDDEDMAP float;
+\end{lstlisting}
+
+Este esquema permite la gestión de conceptos generales y de conceptos que incluyan a su vez su propia lista de equivalencias.
+
+La búsqueda de conceptos es directa a partir de la instrucción SQL \texttt{select} que se comporta de manera muy similar a un SQL estándar (Listado \ref{lst:exampleselect}).
+
+\begin{lstlisting}[caption={Sentencia SELECT simple},label=lst:exampleselect]
+	select from Concepto where Nombre = 'POO';
+\end{lstlisting}
+
+Para que el esquema de equivalencias pueda ser consultado ``al mismo tiempo'' que los datos del nodo se debe ampliar la sintaxis del SQL\cite{orientdb-select-syntax} para que incluya una búsqueda dentro del diccionario embebido en cada nodo.
+
+La base de datos soporta este tipo de operaciones mediante la siguiente sintaxis:
+
+\begin{lstlisting}[caption={Sentencia SELECT con diccionario},label=lst:exampledict]
+select from Concepto where Equivalencias containskey 'MODELO';
+\end{lstlisting}
+
+La clave en el listado \ref{lst:exampledict} radica en la palabra clave \textbf{containskey} que es la encargada, al actuar sobre la propiedad Equivalencias, de encontrar una clave en el diccionario que coincida con el parámetro, en este caso 'MODELO'.
+
+{\tiny
+\begin{lstlisting}
++----+-------+-------------------------------------------------------------+
+|#   |Nombre |Equivalencias                                                |
++----+-------+-------------------------------------------------------------+
+|0   |OBJETO |{MODELO=0.5, PLANTILLA=0.6, ENTIDAD=0.9, CLASE=1.0, COSA=0.1}|
+|1   |ENTIDAD|{OBJETO=0.9, MODELO=0.5}                                     |
++----+-------+-------------------------------------------------------------+
+\end{lstlisting}
+}
+
+Combinando ambos métodos podemos incluir una sentencia que consulte tanto los conceptos puros (a partir de la propiedad Nombre) como las posibles equivalencias.
+
+\begin{lstlisting}[caption={Sentencia SELECT compuesta},label={lst:selectcompuesto}]
+select Nombre,Equivalencias from Concepto 
+where 
+	Equivalencias containskey 'MODELO' 
+	or 
+	Nombre = 'MODELO'
+\end{lstlisting}
+
+{\tiny
+\begin{lstlisting}[caption={Resultado de la consulta por 'MODELO'}]
++----+-------+-------------------------------------------------------------+
+|#   |Nombre |Equivalencias                                                |
++----+-------+-------------------------------------------------------------+
+|0   |OBJETO |{MODELO=0.5, PLANTILLA=0.6, ENTIDAD=0.9, CLASE=1.0, COSA=0.1}|
+|1   |ENTIDAD|{OBJETO=0.9, MODELO=0.5}                                     |
+|2   |MODELO |                                                             |
++----+-------+-------------------------------------------------------------+
+\end{lstlisting}
+}
+
+En la figura precedente podemos ver que la consulta devolvió tres conceptos, uno con una concordancia exacta en el nombre 'MODELO' y dos que se encontraron dentro de la lista de equivalencias, una (OBJETO) con una equivalencia ponderada en 0.5 y otra (ENTIDAD) con una equivalencia ponderada en el mismo valor.
+
+\section{Resultados}
+
+Podemos apreciar que la implementación de listas de equivalencias así como las consultas asociadas a las mismas no reviste gran dificultad en un nivel básico, debido principalmente a que la base de datos incluye de manera nativa mecanismos que permiten almacenar y consultar datos con estructuras complejas anidadas.
+
+\section{Discusión}
+
+Un problema importante que tiene la búsqueda en el diccionario de equivalencias es que no permite coincidencias parciales tales como las que se logran con el operador 'LIKE' en SQL estándar.
+
+Hay que mencionar que la base de datos si permite el uso de dicho operador sobre propiedades que no son de tipos complejos, como por ejemplo el Nombre.
+
+Una consulta del tipo
+
+\begin{lstlisting}
+	select from Conceptos where Nombre like 'MODELO%'
+\end{lstlisting}
+
+es perfectamente válida.
+
+\section{Referencias y bibliografía}
+
+\begin{thebibliography}{50}
+	\bibitem{orientdb} 
+		OrientDB, 
+		\url{http://orientdb.com/}
+	\bibitem{orientdb-data-types}
+		OrientDB Data Types,
+		\url{http://orientdb.com/docs/last/Types.html}
+	\bibitem{orientdb-select-syntax}
+		OrientDB Select Syntax,
+		\url{http://orientdb.com/docs/last/SQL-Query.html}
+\end{thebibliography}
+
+%----------------------------------------------------------------------------------------
+%	LISTA DE TO-DO (CONDICIONAL, DEPENDE DEL FLAG \borrador)
+%----------------------------------------------------------------------------------------
+\ifdefined\borrador
+\section*{Pendientes}
+	\listoftodos[Pendientes]
+\fi
+
+\end{document}          

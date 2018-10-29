@@ -1,0 +1,113 @@
+\documentclass[a4paper,10pt]{article}
+%----------------------------------------------------------------------------------------
+%	DEFINE EL FLAG BORRADOR para imprimir, por ejemplo, la lista de TO-DO
+%----------------------------------------------------------------------------------------
+\def\borrador{}
+
+\input{packages}
+
+\begin{document}
+
+% Title Page
+\title{Titulo}
+\author{Autor/es \\ e-mail: nnnnnn@gmail.com}
+\date{\today}
+\maketitle
+%\tableofcontents
+%\newpage
+
+\begin{abstract}
+	Resumen general.
+\end{abstract}
+
+\section*{Foreword}
+When writing a scientific report it is very important to think carefully how to organize it.
+
+Most reports and scientific papers follow the so called IMRAD structure,that is they are subdivided in four sections: \textbf{I}ntroduction, \textbf{M}ethods, \textbf{R}esults \textbf{A}nd \textbf{D}iscussion.
+
+This is a well-tried format and an efficient way of writing a report, it is highly recommended that you stick to it: 
+
+\begin{quote}
+	The goal of a report or a scientific paper is not to impress the readers by poetic language but to transfer facts and new insights as clearly as possible.
+\end{quote}
+
+More importantly structuring your paper helps you understand more about the topic you are examining.
+
+\section{Introducción}
+
+\large{Ejemplo de código fuente}
+
+\definecolor{armygreen}{rgb}{0.29, 0.33, 0.13}
+\lstset{language=Java,
+	tabsize=3,
+	showstringspaces=false,
+	numbers=left,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{black}\ttfamily\bfseries,
+	stringstyle=\color{armygreen}\ttfamily,
+	commentstyle=\color{gray}\ttfamily,
+	morecomment=[l][\color{gray}]{\#}
+}
+\begin{lstlisting}[title={Prueba de titulo},caption={Prueba de caption},captionpos=b,frame=shadowbox]
+#include<stdio.h>
+#include<iostream>
+// A comment
+int main(void)
+{
+printf("Hello World\n");
+return 0;
+}
+\end{lstlisting}
+
+\section{Métodos}
+
+\large{Ejemplo de dibujo de un grafo}
+
+\begin{tikzpicture}
+\GraphInit[vstyle=Normal];
+\draw[help lines] (0,0) grid (6,3);
+\SetGraphUnit{2}
+\SetVertexNormal[MinSize=35pt]
+\tikzset{EdgeStyle/.style = {->,bend left=20,-latex}}
+\tikzset{newstyle/.style = {->,bend left=20,-latex,dashed}}
+
+
+\Vertex [Math,L=C_1]{C1}
+\NOEA [Math,L=C_2](C1) {C2}
+\SOEA [Math,L=C_{n-1}](C2) {C3}
+\NOEA [Math,L=C_n](C3) {C4}
+
+\Edge[label=$R_{1,2}$,style={above,pos=0.3}](C1)(C2)
+\Edge[label=$R_{2,3}$,style={below,pos=0.3,dashed}](C2)(C3)
+\Edge[label=$R_{n-1,n}$,style={below,pos=0.7}](C3)(C4)
+\end{tikzpicture}
+
+\section{Resultados}
+
+\section{Discusión}
+
+\section{Referencias y bibliografía}
+
+\large{Ejemplo de referencias embebidas}
+
+Para no utilizar un archivo separado. \cite{Simpson}
+
+\begin{thebibliography}{50}
+	\bibitem{orientdb} 
+	OrientDB, 
+	\url{http://orientdb.com/}
+	
+	\bibitem{Simpson} 
+	Homer J. Simpson. \textsl{Mmmmm...donuts}.
+	Evergreen Terrace Printing Co., Springfield, SomewhereUSA, 1998
+\end{thebibliography}
+
+%----------------------------------------------------------------------------------------
+%	LISTA DE TO-DO (CONDICIONAL, DEPENDE DEL FLAG \borrador)
+%----------------------------------------------------------------------------------------
+\ifdefined\borrador
+\section*{Pendientes}
+\listoftodos[Pendientes]
+\fi
+
+\end{document}          

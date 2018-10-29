@@ -1,0 +1,108 @@
+% Required for specifying colors by name
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor} 
+% Define the orange color used for highlighting throughout the book
+\definecolor{ocre}{RGB}{243,102,25} 
+\usepackage[export]{adjustbox}
+\usepackage{subcaption}
+\usepackage{float}
+% Permite utilizar encabezados y pies de pagina simples con KOMA-Script
+\usepackage{scrlayer-scrpage}
+% Page margins
+\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm,headsep=10pt,a4paper]{geometry} 
+\usepackage[document]{ragged2e}
+% Required for including pictures
+\usepackage{graphicx} 
+% Inserts dummy text
+\usepackage{lipsum} 
+%\usepackage[english]{babel} % English language/hyphenation
+\usepackage[spanish,es-noquoting]{babel} % English language/hyphenation
+% Customize lists
+\usepackage{enumitem} 
+% Resaltado de sintaxis en listados de código fuente
+\usepackage{listings}
+% Required for nicer horizontal rules in tables
+\usepackage{booktabs} 
+% Mejor manejo de tablas
+\usepackage{tabularx} 
+% Manejo de hipervinculos
+\usepackage[hidelinks]{hyperref}
+%Manejo de referencias y bibliografía
+%\usepackage
+%[
+%	%style=alphabetic,
+%	style=numeric,
+%	citestyle=numeric,
+%	sorting=none,
+%	%sortcites=true,
+%	%autopunct=true,
+%	babel=hyphen,
+%	hyperref=true,
+%	abbreviate=false,
+%	backref=true,
+%	%backend=biblatex,
+%	defernumbers=false
+%]
+%{biblatex}
+% Permite sacar parte del codigo a un archivo externo. Util para referenciar bibliografía embebida
+%\usepackage{filecontents}
+%----------------------------------------------------------------------------------------
+%	ALGORITMOS
+%----------------------------------------------------------------------------------------
+\usepackage{algorithm2e}
+% Slightly tweak font spacing for aesthetics
+%\usepackage{microtype} 
+% Required for including letters with accents
+\usepackage[utf8]{inputenc} 
+% Use 8-bit encoding that has 256 glyphs
+\usepackage[T1]{fontenc} 
+% Agregar fuentes monoespaciadas bold
+\usepackage{bold-extra}
+% Using Courier font
+%\renewcommand{\ttdefault}{pcr}
+%----------------------------------------------------------------------------------------
+%	DEFINICION DE DIVERSOS TIPOS DE TO-DO
+%----------------------------------------------------------------------------------------
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\usepackage{tablefootnote}
+\usepackage{xargs}
+
+\newcommandx{\revisar}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\cambiar}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green,#1]{#2}}
+\newcommandx{\mejorar}[2][1=]{\todo[linecolor=gray,backgroundcolor=Plum!25,bordercolor=gray,#1]{#2}}
+\newcommandx{\faltafigura}[2][1=]{\missingfigure[#1,figcolor=white]{#2}}
+\newcommandx{\nomostrar}[2][1=]{\todo[disable,#1]{#2}}
+
+% Package para creacion de grafos simplificados
+\usepackage{tkz-graph}
+% Required for drawing custom shapes
+\usepackage{tikz} 
+\usetikzlibrary{
+	arrows,
+	decorations.pathmorphing,
+	backgrounds,
+	positioning,
+	fit,
+	petri,
+	quotes,
+	% Este paquete produce errores usado en conjunto con tkz-graph
+	%babel,	
+	arrows.meta,
+	decorations.pathreplacing,
+	shapes
+}
+
+%----------------------------------------------------------------------------------------
+%	CONFIGURACION DE LOS LISTADOS DE CODIGO FUENTE
+%----------------------------------------------------------------------------------------
+\definecolor{armygreen}{rgb}{0.29, 0.33, 0.13}
+\lstset{language=Java,
+	tabsize=3,
+	showstringspaces=false,
+	numbers=left,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{black}\ttfamily\bfseries,
+	stringstyle=\color{armygreen}\ttfamily,
+	commentstyle=\color{gray}\ttfamily,
+	morecomment=[l][\color{gray}]{\#}
+}
