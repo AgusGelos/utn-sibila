@@ -15,7 +15,7 @@
 *.war
 *.nar
 *.ear
-*.zip
+# *.zip COMENTADO PORQUE LOS BACKUPS DE LA BASE DE DATOS TIENEN ESTA EXTENSION
 *.tar.gz
 *.rar
 
@@ -52,3 +52,5 @@ hs_err_pid*
 .idea/gradle.xml
 .idea/libraries
 /software/java/.gradle
+/software/java/out
+/graphviz
