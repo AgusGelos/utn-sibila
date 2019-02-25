@@ -285,11 +285,16 @@ public class ConceptManager {
     }
     
     public Map<String, Object> getEquivalencias(String concepto) {
-        Concepto c = this.getConceptoByName(concepto);
-        OrientGraph db = Factory.getTx();
-        Vertex conceptoDb = db.getVertex(c.getId());
-        Map<String, Object> equivalencias = conceptoDb.getProperty("Equivalencias");        
-        db.shutdown();
+        Map<String, Object> equivalencias ;
+        try {
+            Concepto c = this.getConceptoByName(concepto);
+            OrientGraph db = Factory.getTx();
+            Vertex conceptoDb = db.getVertex(c.getId());
+            equivalencias = conceptoDb.getProperty("Equivalencias");
+            db.shutdown();
+        } catch(Exception e){
+            equivalencias = null;
+        }
         return equivalencias;
     }
 
