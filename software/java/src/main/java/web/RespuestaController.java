@@ -26,22 +26,29 @@ public class RespuestaController {
     @RequestMapping(path="/respuesta/evaluar", method=RequestMethod.POST)
     public ResponseEntity evaluarRespuesta(@RequestParam("respuestaAlumno") String respuestaAlumno, @RequestParam("respuestaBase") String respuestaBase){
 
-        Controller controller = new Controller();
-        HttpStatus status = HttpStatus.OK;
-        Double calificacion = -1.0;
+        RespuestaHttp respuesta = new RespuestaHttp();
+
         try {
-             calificacion = controller.calcularCalificaciónRespuesta(respuestaAlumno, respuestaBase);
+            Controller controller = new Controller();
+            HttpStatus status = HttpStatus.OK;
+            Double calificacion = -1.0;
+
+            respuesta.agregarDato("calificacion", controller.calcularCalificaciónRespuesta(respuestaAlumno, respuestaBase));
+            respuesta.tipoOk();
         } catch (Exception e){
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            respuesta.setMensaje(e.getMessage());
+            respuesta.tipoError();
         }
 
-        return new ResponseEntity<Double>(calificacion, status);
+        return respuesta.getRespuestaHttp();
 
     }
 
 
     @RequestMapping(path="/respuesta/corregir", method=RequestMethod.POST)
     public ResponseEntity corregirRespuesta(@RequestParam("respuesta") String respuestaText)  {
+
+        RespuestaHttp respuestaHttp = new RespuestaHttp();
 
         ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
         OrtographyManager ortografia = new OrtographyManager(cm);
@@ -88,29 +95,26 @@ public class RespuestaController {
                     sugerenciaTipo = ml.sugerenciaTipoConcepto(termino);
                 }
                 terminoMap.put("sugerenciaTipo", sugerenciaTipo);
-
-
-
-
-
-
-
                 terminosMap.add(terminoMap);
             }
 
-
-            respuestaMap.put("terminos", terminosMap);
+            respuestaHttp.agregarDato("terminos", terminosMap);
 
             if (respuesta.hasErrors()){
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                respuestaHttp.tipoError();
+                respuestaHttp.setMensaje("La respuesta tiene errores ortograficos");
+            }
+            else{
+                respuestaHttp.tipoOk();
             }
         }
         catch(IOException e){
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            respuestaHttp.tipoError();
+            respuestaHttp.setMensaje(e.getMessage());
         }
 
 
-        return new ResponseEntity<HashMap<String, Object>>(respuestaMap, status);
+        return respuestaHttp.getRespuestaHttp();
 
     }
 

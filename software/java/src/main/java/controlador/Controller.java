@@ -39,7 +39,9 @@ public class Controller {
      */
     public Double calcularCalificaciónRespuesta(String candidata, String base) throws IOException{
         Double pesoBase = this.calcularPesoRespuesta(base);
+
         Double pesoCandidata = this.calcularPesoRespuesta(candidata, base);
+
         Double calificacion = pesoCandidata / pesoBase;
         
         return calificacion;

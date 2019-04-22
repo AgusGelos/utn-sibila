@@ -1,5 +1,6 @@
 package web;
 
+import api.Respuesta;
 import conceptmanager.ConceptManager;
 
 import org.springframework.http.HttpStatus;
@@ -19,16 +20,21 @@ public class EstructuraController {
                                         @RequestParam("conceptoDestino") String conceptoDestino,
                                         @RequestParam("relacion") String relacion){
 
-        ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
+        RespuestaHttp respuesta = new RespuestaHttp();
 
-        HttpStatus status = HttpStatus.OK;
+
+
         try {
+            ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
             cm.addStruct(conceptoOrigen, conceptoDestino, relacion);
+            respuesta.tipoOk();
+
         } catch (Exception e){
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            respuesta.tipoError();
+            respuesta.setMensaje(e.getMessage());
         }
 
-        return new ResponseEntity(status);
+        return respuesta.getRespuestaHttp();
 
     }
 

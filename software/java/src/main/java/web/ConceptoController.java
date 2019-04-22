@@ -18,23 +18,39 @@ public class ConceptoController {
 
 
     @RequestMapping(path="/conceptos", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ArrayList<HashMap> getConceptos() throws JSONException {
-        ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
-        ArrayList<Concepto> conceptos = cm.getConceptos();
+    public ResponseEntity getConceptos()  {
 
-        ArrayList<HashMap> response = new ArrayList<>();
+        RespuestaHttp respuesta = new RespuestaHttp();
 
-        for (Concepto concepto : conceptos) {
-            HashMap<String, Object> map = new HashMap<>();
+        try {
+            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            ArrayList<Concepto> conceptos = cm.getConceptos();
+            ArrayList<HashMap> conceptosBody = new ArrayList<>();
 
-            map.put("id", concepto.getId());
-            map.put("nombre", concepto.getNombre());
-            map.put("equivalencias", cm.getEquivalencias(concepto.getNombre()));
 
-            response.add(map);
+            for (Concepto concepto : conceptos) {
+                HashMap<String, Object> map = new HashMap<>();
+
+                map.put("id", concepto.getId());
+                map.put("nombre", concepto.getNombre());
+                map.put("equivalencias", cm.getEquivalencias(concepto.getNombre()));
+
+                conceptosBody.add(map);
+            }
+
+            respuesta.agregarDato("conceptos", conceptosBody);
+            respuesta.setMensaje("ok");
+            respuesta.tipoOk();
+
+        }
+        catch (Exception e){
+
+            respuesta.tipoError();
+            respuesta.setMensaje(e.getMessage());
         }
 
-        return response;
+
+        return respuesta.getRespuestaHttp();
 
     }
 
@@ -42,17 +58,22 @@ public class ConceptoController {
 
     @RequestMapping(path="/concepto", method=RequestMethod.POST)
     public ResponseEntity addConcepto(@RequestParam("nombre") String nombre){
+
+        RespuestaHttp respuesta = new RespuestaHttp();
+
         ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
         Concepto concepto = new Concepto("",nombre);
 
-        HttpStatus status = HttpStatus.OK;
+
         try {
             cm.addConcepto(concepto);
+            respuesta.tipoOk();
         } catch (Exception e){
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            respuesta.tipoError();
+            respuesta.setMensaje(e.getMessage());
         }
 
-        return new ResponseEntity(status);
+        return respuesta.getRespuestaHttp();
 
     }
 
@@ -60,83 +81,112 @@ public class ConceptoController {
 
     @RequestMapping(path="/concepto/{nombre}", method=RequestMethod.GET)
     public ResponseEntity<HashMap> getConcepto(@PathVariable("nombre") String nombre){
-        ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
 
-        Concepto concepto = cm.getConceptoByName(nombre);
-        HashMap<String, Object> conceptoMap = new HashMap<>();
+        RespuestaHttp respuesta = new RespuestaHttp();
+        try {
+            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
 
-        if (concepto != null){
+            Concepto concepto = cm.getConceptoByName(nombre);
+            HashMap<String, Object> conceptoMap = new HashMap<>();
 
-            conceptoMap.put("id", concepto.getId());
-            conceptoMap.put("nombre", concepto.getNombre());
-            conceptoMap.put("equivalencias", cm.getEquivalencias(concepto.getNombre()));
+            if (concepto != null) {
+
+                conceptoMap.put("id", concepto.getId());
+                conceptoMap.put("nombre", concepto.getNombre());
+                conceptoMap.put("equivalencias", cm.getEquivalencias(concepto.getNombre()));
+
+                respuesta.agregarDato("concepto", conceptoMap);
+                respuesta.tipoOk();
+            } else {
+                respuesta.noEncontrado();
+                respuesta.setMensaje("No existe un concepto con el nombre especificado");
+            }
         }
-        else{
-            conceptoMap.put("mensaje", "No existe un concepto con el nombre especificado");
+        catch(Exception e){
+            respuesta.tipoError();
+            respuesta.setMensaje(e.getMessage());
         }
 
-
-        return new ResponseEntity<HashMap>(conceptoMap, HttpStatus.OK);
+        return respuesta.getRespuestaHttp();
 
     }
 
 
     @RequestMapping(path="/concepto/{nombre}", method=RequestMethod.PUT)
     public ResponseEntity<String> updateConcepto(@PathVariable("nombre") String nombre, @RequestParam("nuevoNombre") String nuevoNombre){
-        ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
 
-        Concepto concepto = cm.getConceptoByName(nombre);
-        String mensaje = "";
-        HttpStatus status;
+        RespuestaHttp respuesta = new RespuestaHttp();
 
-        if (concepto != null){
 
-            cm.updNombreConcepto(concepto, nuevoNombre);
-            status = HttpStatus.OK;
+        try {
+            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+
+
+            Concepto concepto = cm.getConceptoByName(nombre);
+            String mensaje = "";
+            HttpStatus status;
+
+            if (concepto != null) {
+
+                cm.updNombreConcepto(concepto, nuevoNombre);
+                respuesta.tipoOk();
+            } else {
+                respuesta.noEncontrado();
+                respuesta.setMensaje("El concepto que se quiere actualizar no existe");
+            }
         }
-        else {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            mensaje = "El concepto que se quiere actualizar no existe";
+        catch(Exception e){
+            respuesta.tipoError();
+            respuesta.setMensaje(e.getMessage());
         }
 
-
-        return new ResponseEntity<String>(mensaje, status);
+        return respuesta.getRespuestaHttp();
 
     }
 
 
     @RequestMapping(path="/concepto/{nombre}", method=RequestMethod.DELETE)
     public ResponseEntity<String> deleteConcepto(@PathVariable("nombre") String nombre){
-        ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
 
-        Concepto concepto = cm.getConceptoByName(nombre);
-        String mensaje = "";
-        HttpStatus status;
+        RespuestaHttp respuesta = new RespuestaHttp();
 
-        if (concepto != null){
+        try {
+            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
 
-            Boolean borrado = cm.delConceptoSafe(concepto);
+            Concepto concepto = cm.getConceptoByName(nombre);
+            String mensaje = "";
+            HttpStatus status;
 
-            if (borrado){
-                status = HttpStatus.OK;
-                mensaje = "Se ha borrado el concepto con éxito";
+            if (concepto != null) {
+
+                Boolean borrado = cm.delConceptoSafe(concepto);
+
+                if (borrado) {
+                    respuesta.tipoOk();
+                    respuesta.setMensaje("Se ha borrado el concepto con éxito");
+                } else {
+                    respuesta.tipoError();
+                    respuesta.setMensaje("Existen relaciones asociadas al concepto. No es posible borrarlo");
+                }
+
+            } else {
+                respuesta.noEncontrado();
+                respuesta.setMensaje("El concepto que se quiere actualizar no existe");
+
             }
-            else {
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
-                mensaje = "Existen relaciones asociadas al concepto. No es posible borrarlo";
-            }
-
         }
-        else {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            mensaje = "El concepto que se quiere actualizar no existe";
+        catch(Exception e){
+            respuesta.tipoError();
+            respuesta.setMensaje(e.getMessage());
         }
 
 
-        return new ResponseEntity<String>(mensaje, status);
+        return respuesta.getRespuestaHttp();
 
     }
 
+
+    // Desde acá no está documentado en Swagger
 
     @RequestMapping(path="/concepto/{nombreConcepto}/equivalencias", method=RequestMethod.GET)
     public ResponseEntity<HashMap> getEquivalenciasByConcepto(@PathVariable("nombreConcepto") String nombre){
