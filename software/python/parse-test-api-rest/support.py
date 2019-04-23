@@ -126,7 +126,7 @@ def leer_preguntas_csv(fd, divisor):
         spamreader = csv.reader(csvfile, delimiter=divisor, quotechar='|')
         for row in spamreader:
             res = vector_a_pregunta(row, v)
-            if res != None:
+            if res:
                 v.append(res)
     return v
 
