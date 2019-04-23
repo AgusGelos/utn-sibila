@@ -45,7 +45,17 @@ public class RespuestaController {
     }
 
 
-    @RequestMapping(path="/respuesta/corregir", method=RequestMethod.POST)
+    @RequestMapping(path="/version", method=RequestMethod.GET)
+    public ResponseEntity getVersion() {
+        RespuestaHttp respuesta = new RespuestaHttp();
+        respuesta.tipoOk();
+        respuesta.setMensaje("Prueba de concepto");
+        respuesta.agregarDato("version", "1.0.0");
+
+        return respuesta.getRespuestaHttp();
+    }
+
+        @RequestMapping(path="/respuesta/corregir", method=RequestMethod.POST)
     public ResponseEntity corregirRespuesta(@RequestParam("respuesta") String respuestaText)  {
 
         RespuestaHttp respuestaHttp = new RespuestaHttp();

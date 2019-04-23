@@ -13,13 +13,13 @@ public class RespuestaHttp {
     private static final String ESTADO_NOT_FOUND = "no encontrado";
 
     private String mensaje;
-    private ArrayList<HashMap<String, Object>> datos;
+    private HashMap<String, Object> datos;
     private String estado;
 
     public RespuestaHttp(){
         this.mensaje = "";
         this.estado = this.ESTADO_ERROR;
-        this.datos = new ArrayList<>();
+        this.datos = new HashMap<String, Object>();
     }
 
     public void setMensaje(String mensaje){
@@ -38,14 +38,14 @@ public class RespuestaHttp {
         this.estado = this.ESTADO_NOT_FOUND;
     }
 
-    public void agregarDato(HashMap<String, Object> dato){
-        this.datos.add(dato);
-    }
+    //public void agregarDato(HashMap<String, Object> dato){
+    //    this.datos.add(dato);
+    //}
 
     public void agregarDato(String nombre, Object dato){
-        HashMap data = new HashMap();
-        data.put(nombre, dato);
-        this.datos.add(data);
+        //HashMap data = new HashMap();
+        //data.put(nombre, dato);
+        this.datos.put(nombre, dato);
     }
 
 
@@ -55,7 +55,11 @@ public class RespuestaHttp {
 
         body.put("estado", this.estado);
         body.put("mensaje", this.mensaje);
+
         body.put("datos", this.datos);
+
+
+
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
