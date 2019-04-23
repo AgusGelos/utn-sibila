@@ -113,21 +113,30 @@ def leer_mostrar_csv(fd, divisor):
 
 def leer_respuestas_csv(fd, divisor):
     v = []
+    flag = True
     with open(fd, newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=divisor, quotechar='|')
         for row in spamreader:
-            v.append(vector_a_respuesta(row))
+            if flag:
+                flag = False
+            else:
+                v.append(vector_a_respuesta(row))
     return v
 
 
 def leer_preguntas_csv(fd, divisor):
     v = []
+    flag = True
     with open(fd, newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=divisor, quotechar='|')
         for row in spamreader:
-            res = vector_a_pregunta(row, v)
-            if res:
-                v.append(res)
+            if flag:
+                flag = False
+            else:
+                res = vector_a_pregunta(row, v)
+                if res:
+                    v.append(res)
+
     return v
 
 

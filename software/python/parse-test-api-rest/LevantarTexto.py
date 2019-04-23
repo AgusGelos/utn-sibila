@@ -15,6 +15,7 @@ def test():
         print('5) Correccion Ortografica')
         print('6) Correccion numerica')
         print('7) Salir')
+        print('9) Probar la api')
 
         op = input('Seleccione: ')
         clear()
@@ -67,10 +68,12 @@ def test():
         elif op == '5':
             print('En programacion... ._.')
 
-
         # Correccion numerica
         elif op == '6':
             print('En programacion... .-.')
+
+        elif op == '9':
+            pass
 
         elif op == '7':
             break

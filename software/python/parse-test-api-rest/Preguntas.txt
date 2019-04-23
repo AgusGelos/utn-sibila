@@ -1,3 +1,4 @@
+Legajo alumno | Alumno nombre y apellido | IdExamen | IdPregunta | Consigna pregunta | Empieza con | Respuesta alumno
 77184|Gastón Ezequiel Aguirre|6|9|Definir si un objeto "x" se encuentra incluido en "lista"
 77184|Gastón Ezequiel Aguirre|6|14|clausulas de horn
 77184|Gastón Ezequiel Aguirre|6|13|constantes individuales, enunciados atomicos, enunciados atomicos combinados, predicados con consecuente

@@ -1,3 +1,4 @@
+IdExamen | IdPregunta | Pregunta consigna | Empíeza con | Respuesta pregunta
 6|9|Cuál es el propósito del predicado member(x,lista)?|El propósito del predicado member(x,lista) es|determinar si un elemento pertenece a la lista.
 6|9|Cuál es el propósito del predicado member(x,lista)?|El propósito del predicado member(x,lista) es|determinar si el elemento x pertence a la lista.
 6|9|Cuál es el propósito del predicado member(x,lista)?|El propósito del predicado member(x,lista) es|informar si un elemento pertenece a la lista.
