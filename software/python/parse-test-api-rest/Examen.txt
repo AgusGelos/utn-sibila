@@ -1,0 +1,24 @@
+6|9|Cuál es el propósito del predicado member(x,lista)?|El propósito del predicado member(x,lista) es|determinar si un elemento pertenece a la lista.
+6|9|Cuál es el propósito del predicado member(x,lista)?|El propósito del predicado member(x,lista) es|determinar si el elemento x pertence a la lista.
+6|9|Cuál es el propósito del predicado member(x,lista)?|El propósito del predicado member(x,lista) es|informar si un elemento pertenece a la lista.
+6|9|Cuál es el propósito del predicado member(x,lista)?|El propósito del predicado member(x,lista) es|devolver true si x pertenece a la lista y false caso contrario.
+6|14|Cómo se llaman las cláusulas que usa Prolog para definir relaciones?|Las cláusulas que usa Prolog para definir relaciones se llaman|Cláusulas de Horn
+6|13|Enumere los elementos del Lenguaje de Primer Orden.|Los elementos del Lenguaje de Primer Orden son:|Constantes individuales.  Símbolos de predicado.  Enunciados atómicos.  Enunciados atómicos combinados.  Predicados con consecuente.
+6|12|Enumere los elementos de un programa en Prolog.|Los elementos de un programa en Prolog son:|Base de conocimiento.  Motor de inferencia.  Evaluador de expresiones.
+6|10|Que devuelve el predicado findall?|El predicado findall devuelve|una lista con todas las soluciones de un determinado predicado.
+6|10|Que devuelve el predicado findall?|El predicado findall devuelve|una lista con todos los elementos formados por todas las soluciones de un determinado predicado.
+6|6|Qué denotan los símbolos predicado?|Los símbolos predicado denotan|alguna propiedad de un objeto o alguna relación entre objetos.
+6|6|Qué denotan los símbolos predicado?|Los símbolos predicado denotan|una propiedad o característica de un objeto en el caso que sea un predicado de aridad uno, o la relación entre objetos en caso de ser un predicado de una aridad mayor a uno.
+6|6|Qué denotan los símbolos predicado?|Los símbolos predicado denotan|propiedades o relaciones entre objetos.
+6|8|Qué representa el antecedente o conclusión de una regla?|El antecedente o conclusión de una regla es|la condición que determinará en qué casos el consecuente es verdadero o false.
+6|8|Qué representa el antecedente o conclusión de una regla?|El antecedente o conclusión de una regla es|la parte en que deben verificarse las condiciones para que la conclusión sea verdadera o falsa.
+6|8|Qué representa el antecedente o conclusión de una regla?|El antecedente o conclusión de una regla es|la condición o condiciones que deben verificarse para que la conclusión sea verdadera o falsa.
+6|11|Qué retorna el predicado length ?|El predicado length retorna|la cantidad de elementos de una lista.
+6|11|Qué retorna el predicado length ?|El predicado length retorna|la cantidad de elementos que posee la lista que tiene como argumento.
+6|11|Qué retorna el predicado length ?|El predicado length retorna|la longitud de una lista.
+6|11|Qué retorna el predicado length ?|El predicado length retorna|el número de elementos de una lista.
+6|7|Qué son los enunciados atómicos combinados?|Los enunciados atómicos combinados son|enunciados que combinan dos o más enunciados simples utilizando un conectivo lógico.
+6|7|Qué son los enunciados atómicos combinados?|Los enunciados atómicos combinados son|enunciados atómicos simples que se combinan con conectivos lógicos.
+6|7|Qué son los enunciados atómicos combinados?|Los enunciados atómicos combinados son|enunciados atómicos simples que se combinan utilizando conectivos lógicos.
+6|7|Qué son los enunciados atómicos combinados?|Los enunciados atómicos combinados son|enunciados atómicos simples que se combinan utilizando conectivos and u or.
+6|15|Para qué se utiliza el operador is?|El operador is se utiliza para|evaluar expresiones aritméticas y funciones.
