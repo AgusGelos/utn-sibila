@@ -114,7 +114,7 @@ def leer_mostrar_csv(fd, divisor):
 def leer_respuestas_csv(fd, divisor):
     v = []
     flag = True
-    with open(fd, newline='') as csvfile:
+    with open(fd, newline='', encoding='UTF-8') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=divisor, quotechar='|')
         for row in spamreader:
             if flag:
@@ -127,7 +127,7 @@ def leer_respuestas_csv(fd, divisor):
 def leer_preguntas_csv(fd, divisor):
     v = []
     flag = True
-    with open(fd, newline='') as csvfile:
+    with open(fd, newline='', encoding='UTF-8') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=divisor, quotechar='|')
         for row in spamreader:
             if flag:
