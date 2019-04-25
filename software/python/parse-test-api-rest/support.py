@@ -277,3 +277,47 @@ def generar_archivo_correccion_ortografica(respuestas):
                     respuesta_corregida += termino['nombre']
                 respuesta_corregida += ' '
             respuestas_writer.writerow([entrada.id_alumno, entrada.nom_alumno, entrada.id_examen, entrada.id_pregunta, respuesta_corregida])
+
+def generar_archivo_evaluacion(preguntas, respuestas):
+    with open('output/respuestas_evaluacion_errores.csv', newline='', mode='w') as errores_file:
+        errores_writer = csv.writer(errores_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        errores_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno', 'Codigo de Error'])
+
+        with open('output/respuestas_evaluacion.csv', newline='', mode='w') as respuestas_file:
+            respuestas_writer = csv.writer(respuestas_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            respuestas_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno', 'Calificacion'])
+
+            for entrada in respuestas:
+                respuestaAlumno = entrada.txt_respuesta
+
+                # Buscamos la pregunta correspondiente
+                preguntas_correspondientes = [x for x in preguntas if (x.id_examen == entrada.id_examen) and (x.id_pregunta == entrada.id_pregunta)]
+
+                # print("para " + str(entrada.id_examen) + ", " + str(entrada.id_pregunta) + " " + str(len(preguntas_correspondientes)))
+
+                for pregunta in preguntas_correspondientes:
+                    for respuestaBase in pregunta.v_respuestas:
+                        rqst = requests.post('http://localhost:8080/respuesta/evaluar', data = {'respuestaAlumno':respuestaAlumno, 'respuestaBase':respuestaBase})
+
+                        if rqst.status_code == 200:
+                            # Si se proceso correctamente, va al archivo de calificacion
+                            calificacion = rqst.json()['datos']['calificacion']
+                            respuestas_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta, respuestaBase, respuestaAlumno, calificacion])
+
+                            print(respuestaBase)
+                            print(respuestaAlumno)
+                            print(calificacion)
+                            print('-')
+                        else:
+                            # De lo contrario, al archivo de errores
+                            error_code = rqst.status_code
+                            errores_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta, respuestaBase, respuestaAlumno, error_code])
+
+                            print(respuestaBase)
+                            print(respuestaAlumno)
+                            print(error_code)
+                            print('-')
+
+                
+
+

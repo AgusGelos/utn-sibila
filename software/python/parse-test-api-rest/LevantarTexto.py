@@ -17,6 +17,7 @@ def test():
         print('3) Grabar archivo de texto')
         print('4) Archivo Binario')
         print('5) Generar archivo con "correccion ortografica" o "2da chance"')
+        print('6) Generar archivo de evaluacion')
         print('7) Salir')
 
         op = input('Seleccione: ')
@@ -69,8 +70,9 @@ def test():
         # Generar archivo con correcciones ortograficas
         elif op == '5':
             if len(respuestas) == 0:
-                print("Selecciona un archivo de preguntas.")
+                print("Selecciona un archivo de respuestas.")
                 respuestas = archivo_para_lectura(fd_res_txt, True)
+                print(len(respuestas))
 
             print('Correccion iniciada.')
             generar_archivo_correccion_ortografica(respuestas)
@@ -78,7 +80,21 @@ def test():
 
         # Correccion numerica
         elif op == '6':
-            print('En programacion... .-.')
+            while len(preguntas) == 0:
+                print("Selecciona un archivo de respuestas.")
+                preguntas = archivo_para_lectura(fd_examen, False)
+                print(len(preguntas))
+
+            print('')
+
+            while len(respuestas) == 0:
+                print("Selecciona un archivo de preguntas.")
+                respuestas = archivo_para_lectura(fd_res_txt, True)
+                print(len(respuestas))
+
+            print('Evaluacion iniciada.')
+            generar_archivo_evaluacion(preguntas, respuestas)
+            print("Listo.")
 
         elif op == '9':
             pass
