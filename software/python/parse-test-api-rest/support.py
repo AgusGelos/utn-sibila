@@ -1,6 +1,7 @@
 import pickle
 import os
 import csv
+import requests
 
 # FUNCIONES BASICAS
 
@@ -252,3 +253,27 @@ def archivo_para_grabacion(v, fd, op=True):
 
     else:
         print("No se han cargado preguntas")
+
+# A partir del set de respuestas, genera un archivo de esas mismas respuestas, corregidas
+def generar_archivo_correccion_ortografica(respuestas):
+    with open('output/respuestas_correccion_ortografica.csv', newline='', mode='w') as respuestas_file:
+        respuestas_writer = csv.writer(respuestas_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        respuestas_writer.writerow(['Legajo alumno', 'Alumno nombre y apellido', 'IdExamen', 'IdPregunta', 'Respuesta alumno'])
+
+        for entrada in respuestas:
+            respuesta = entrada.txt_respuesta
+            respuesta_corregida = ''
+            
+            # Enviamos la respuesta a corregir
+            rqst = requests.post('http://localhost:8080/respuesta/corregir', data = {'respuesta':respuesta})
+
+            # Tomamos los terminos
+            terminos = rqst.json()['datos']['terminos']
+            for termino in terminos:
+                # Si hay un error ortografico
+                if termino['error']['error']:
+                    respuesta_corregida += termino['error']['sugerencias'][0]
+                else:
+                    respuesta_corregida += termino['nombre']
+                respuesta_corregida += ' '
+            respuestas_writer.writerow([entrada.id_alumno, entrada.nom_alumno, entrada.id_examen, entrada.id_pregunta, respuesta_corregida])

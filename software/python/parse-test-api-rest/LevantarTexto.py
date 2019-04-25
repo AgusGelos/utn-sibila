@@ -6,16 +6,18 @@ def test():
         = leer_configuracion_csv('config.txt', ':')
     respuestas = []
     preguntas = []
+    
+    if not os.path.exists('output'):
+        os.mkdir('output')
+
     while True:
         print('Menu:')
         print('1) Leer archivo')
         print('2) Mostrar archivo en memoria')
         print('3) Grabar archivo de texto')
         print('4) Archivo Binario')
-        print('5) Correccion Ortografica')
-        print('6) Correccion numerica')
+        print('5) Generar archivo con "correccion ortografica" o "2da chance"')
         print('7) Salir')
-        print('9) Probar la api')
 
         op = input('Seleccione: ')
         clear()
@@ -64,9 +66,15 @@ def test():
             elif op1 == '2':
                 respuestas, preguntas = archivo_para_lectura(fd_todo_bin)
 
-        # Correccion Ortografica
+        # Generar archivo con correcciones ortograficas
         elif op == '5':
-            print('En programacion... ._.')
+            if len(respuestas) == 0:
+                print("Selecciona un archivo de preguntas.")
+                respuestas = archivo_para_lectura(fd_res_txt, True)
+
+            print('Correccion iniciada.')
+            generar_archivo_correccion_ortografica(respuestas)
+            print("Listo.")
 
         # Correccion numerica
         elif op == '6':
