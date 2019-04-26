@@ -278,15 +278,18 @@ def generar_archivo_correccion_ortografica(respuestas):
                 respuesta_corregida += ' '
             respuestas_writer.writerow([entrada.id_alumno, entrada.nom_alumno, entrada.id_examen, entrada.id_pregunta, respuesta_corregida])
 
+            print(respuesta + ' -> ' + respuesta_corregida)
+
 def generar_archivo_evaluacion(preguntas, respuestas):
     with open('output/respuestas_evaluacion_errores.csv', newline='', mode='w') as errores_file:
         errores_writer = csv.writer(errores_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        errores_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno', 'Codigo de Error'])
+        errores_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno', 'Codigo de Error', 'Mensaje'])
 
         with open('output/respuestas_evaluacion.csv', newline='', mode='w') as respuestas_file:
             respuestas_writer = csv.writer(respuestas_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             respuestas_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno', 'Calificacion'])
 
+            print('\n')
             for entrada in respuestas:
                 respuestaAlumno = entrada.txt_respuesta
 
@@ -307,16 +310,22 @@ def generar_archivo_evaluacion(preguntas, respuestas):
                             print(respuestaBase)
                             print(respuestaAlumno)
                             print(calificacion)
-                            print('-')
+                            print('\n')
                         else:
                             # De lo contrario, al archivo de errores
                             error_code = rqst.status_code
-                            errores_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta, respuestaBase, respuestaAlumno, error_code])
+                            
+                            mensaje = ''
+                            if error_code == 500:
+                                mensaje = rqst.json()['mensaje']
+
+                            errores_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta, respuestaBase, respuestaAlumno, error_code, mensaje])
 
                             print(respuestaBase)
                             print(respuestaAlumno)
                             print(error_code)
-                            print('-')
+                            print(mensaje)
+                            print('\n')
 
                 
 
