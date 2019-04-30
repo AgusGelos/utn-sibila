@@ -1,7 +1,7 @@
 Respuestas en texto:Preguntas.txt
-Todos los datos en archivo binario:./Grabaciones/Examenes.bin
-Respuestas incorrectas ortograficamente:./Grabaciones/ResIncOrt.txt
-Respuestas corregidas:./Grabaciones/ResCorregidas.txt
+Todos los datos en archivo binario:./output/Examenes.bin
+Respuestas incorrectas ortograficamente:./output/ResIncOrt.txt
+Respuestas corregidas:./output/ResCorregidas.txt
 Preguntas Examen:Examen.txt
-Grabacion Respuestas:./Grabaciones/Respuestas.txt
-Grabacion Preguntas:./Grabaciones/Preguntas.txt
+Grabacion Respuestas:./output/Respuestas.txt
+Grabacion Preguntas:./output/Preguntas.txt
