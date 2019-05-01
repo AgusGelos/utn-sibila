@@ -85,20 +85,23 @@ public class RespuestaController {
 
                 //LisugerenciasErrorMap = new HashMap<String>();
 
-                List<String> sugerencias = termino.getSugerenciasCorreccion();
+                String tipo = termino.getTipo();
+                terminoMap.put("tipo", tipo);
 
-                /*for (String sugerencia : sugerencias) {
-                    sugerenciasErrorMap.put(sugerencia);
-                } */
+
+                // Si el término está en la base de datos no se corrige ortograficamente
+                if (tipo != ""){
+                    termino.setSugerenciasCorreccion(new ArrayList<>());
+                }
+
 
                 errorMap.put("error", termino.hasErrors());
-                errorMap.put("sugerencias", sugerencias);
+                errorMap.put("sugerencias", termino.getSugerenciasCorreccion());
 
                 terminoMap.put("nombre",termino.getNombre());
                 terminoMap.put("error", errorMap);
 
-                String tipo = termino.getTipo();
-                terminoMap.put("tipo", tipo);
+
 
                 String sugerenciaTipo = tipo;
                 if (sugerenciaTipo == ""){

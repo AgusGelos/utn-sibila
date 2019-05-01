@@ -215,6 +215,33 @@ public class ConceptoController {
 
 
 
+    @RequestMapping(path="/concepto/{nombreConcepto}/equivalencia", method=RequestMethod.POST)
+    public ResponseEntity<HashMap> addEquivalencia(
+            @PathVariable("nombreConcepto") String concepto,
+            @RequestParam("nombreEquivalencia") String nombreEquivalencia,
+            @RequestParam("pesoEquivalencia") Double pesoEquivalencia
+    ){
+
+        RespuestaHttp respuestaHttp = new RespuestaHttp();
+
+        try {
+            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            cm.addEquivalencia(concepto, nombreEquivalencia, pesoEquivalencia);
+            respuestaHttp.tipoOk();
+
+        }
+        catch(Exception e){
+            respuestaHttp.tipoError();
+            respuestaHttp.setMensaje(e.getMessage());
+        }
+
+        return respuestaHttp.getRespuestaHttp();
+
+
+
+    }
+
+
     @RequestMapping(path="/concepto/{nombreConcepto}/equivalencias/{nombreEquivalencia}", method=RequestMethod.GET)
     public ResponseEntity<HashMap> getEquivalenciasByName(@PathVariable("nombreConcepto") String nombreConcepto, @PathVariable("nombreEquivalencia") String nombreEquivalencia){
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
