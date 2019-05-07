@@ -327,6 +327,76 @@ def generar_archivo_evaluacion(preguntas, respuestas):
                             print(mensaje)
                             print('\n')
 
+
+def respuestas_profesor_a_DB(preguntas):
+    for pregunta in preguntas:
+        respuesta_profesor_a_DB(pregunta)
+        
+
+def respuesta_profesor_a_DB(pregunta):
+    for respuestaBase in pregunta.v_respuestas:
+        respuesta = pregunta.txt_inicio_res + " " + respuestaBase
+        respuesta_a_DB(respuesta)
+
+def respuesta_a_DB(respuesta):            
+            rqst = requests.post('http://localhost:8080/respuesta/corregir', data = {'respuesta':respuesta})
+
+            print('\n\n' + respuesta)
+
+            frase = ''
+            elementos = []
+
+            terminos = rqst.json()['datos']['terminos']
+            last_tipo = ''
+            for termino in terminos:
+                tipo = termino['tipo']
+                if(tipo == ''):
+                    # Ignoramos las sugeridas como ignorar, que no sean "error ortografico"
+                    if(termino['sugerenciaTipo'] != 'Ignorar' or termino['error']['error']):
+                        if(termino['sugerenciaTipo'] == 'Relacion'):
+                            tipo = 'R'
+                        elif(termino['sugerenciaTipo'] == 'Concepto'):
+                            tipo = 'C'
+                        else:
+                            tipo = 'C'
+                    else:
+                        tipo = 'I'
                 
+                if tipo != 'I':
+                    if last_tipo == '':
+                        last_tipo = tipo;
+                    if tipo != last_tipo:
+                        elementos.append([last_tipo, frase])
+                        frase = ''
+                        if tipo == 'C':
+                            print(') [ ', end='')
+                        else:
+                            print('] ( ', end='')
+                    
+                    frase += termino['nombre'] + ' '
+                    print(termino['nombre'], end=' ')
 
+                    last_tipo = tipo
 
+            elementos.append([last_tipo, frase])
+
+            # Mostramos como los separamos
+            print('')
+            print(elementos)
+
+            # Conceptos primero
+            for x in range(len(elementos)):
+                if elementos[x][0] == 'C':
+                    rqst = requests.post('http://localhost:8080/concepto', data = {'nombre':elementos[x][1]})
+                    print(elementos[x][1])
+
+            # Relaciones despues
+            for x in range(len(elementos)):
+                if elementos[x][0] == 'R':
+                    if x+1 < len(elementos):
+                        origen = str(elementos[x-1][1])
+                        destino = str(elementos[x+1][1])
+                        relacion = str(elementos[x][1])
+                        rqst = requests.post('http://localhost:8080/estructura', data = {"conceptoOrigen":origen, "conceptoDestino":destino, "relacion":relacion})
+
+                        print(elementos[x-1][1] + ' -> ' + elementos[x][1] + ' -> ' + elementos[x+1][1])

@@ -18,7 +18,8 @@ def test():
         print('4) Archivo Binario')
         print('5) Generar archivo con "correccion ortografica" o "2da chance"')
         print('6) Generar archivo de evaluacion')
-        print('7) Salir')
+        print('7) Interpretar respuestas como grafos')
+        print('8) Salir')
 
         op = input('Seleccione: ')
         clear()
@@ -81,14 +82,14 @@ def test():
         # Correccion numerica
         elif op == '6':
             while len(preguntas) == 0:
-                print("Selecciona un archivo de respuestas.")
+                print("Selecciona un archivo de preguntas.")
                 preguntas = archivo_para_lectura(fd_examen, False)
                 print(len(preguntas))
 
             print('')
 
             while len(respuestas) == 0:
-                print("Selecciona un archivo de preguntas.")
+                print("Selecciona un archivo de respuestas.")
                 respuestas = archivo_para_lectura(fd_res_txt, True)
                 print(len(respuestas))
 
@@ -96,10 +97,15 @@ def test():
             generar_archivo_evaluacion(preguntas, respuestas)
             print("Listo.")
 
-        elif op == '9':
-            pass
-
         elif op == '7':
+            while len(preguntas) == 0:
+                print("Selecciona un archivo de preguntas.")
+                preguntas = archivo_para_lectura(fd_examen, False)
+                print(len(preguntas))
+
+            respuestas_profesor_a_DB(preguntas)
+
+        elif op == '8':
             break
 
         else:
