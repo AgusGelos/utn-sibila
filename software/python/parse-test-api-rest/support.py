@@ -300,7 +300,7 @@ def generar_archivo_evaluacion(preguntas, respuestas):
 
                 for pregunta in preguntas_correspondientes:
                     for respuestaBase in pregunta.v_respuestas:
-                        rqst = requests.post('http://localhost:8080/respuesta/evaluar', data = {'respuestaAlumno':respuestaAlumno, 'respuestaBase':respuestaBase})
+                        rqst = requests.post('http://localhost:8080/respuesta/evaluar', data = {'respuestaAlumno':pregunta.txt_inicio_res + ' ' + respuestaAlumno, 'respuestaBase':pregunta.txt_inicio_res + ' ' + respuestaBase})
 
                         if rqst.status_code == 200:
                             # Si se proceso correctamente, va al archivo de calificacion
