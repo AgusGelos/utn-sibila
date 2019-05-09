@@ -79,11 +79,10 @@ public class RespuestaController {
             ArrayList<HashMap<String, Object>> terminosMap = new ArrayList<HashMap<String, Object>>();
 
             for (Termino termino : terminos) {
+
                 HashMap<String, Object> terminoMap = new HashMap<String, Object>();
 
                 HashMap<String, Object> errorMap = new HashMap<String, Object>();
-
-                //LisugerenciasErrorMap = new HashMap<String>();
 
                 String tipo = termino.getTipo();
                 terminoMap.put("tipo", tipo);
