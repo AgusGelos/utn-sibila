@@ -21,10 +21,15 @@ Si necesito correrlo actualizando las dependencias
 
 `gradle build --refresh-dependencies`
 
+#### Ejecutar servidor Java
+
+Teniendo el .jar ejecutar
+`java -jar path_to_jar`
+
 
 #### Configurar servidor de Python
 
-Crear un entorno virtual de python. Por ejemplo, haciendo
+##### Crear un entorno virtual e instalar dependencias
 
 `python -m virtualenv venv`
 
@@ -34,3 +39,19 @@ Asegurar que el entorno se ejecuta en **python 3**. Si no se posee python3 corri
 Activar el entorno y luego instalar las dependencias con
 
 `pip install -r requirements.txt`
+
+##### Descargar diccionario para spacy
+
+_Ejemplo_
+
+`python -m spacy download es_core_news_sm` o `python -m spacy download es_core_news_md` 
+
+Tener en cuenta que para usar uno u otro diccionario se debe especificar en spacy_server/services/manejador_spacy. Por defecto se utiliza _es_core_news_sm_ . Tener en cuenta adems que el tiempo de ejecución varía en función del tamaño del diccionario que se utiliza.
+
+#### Ejecutar servidor de python
+
+Con el entorno activado estando en /spacy_server/ ejecutar:
+`python app.py`
+
+
+Además tener en cuenta que la base de datos debe estar corriendo, de lo contrario no funcionará.
