@@ -88,7 +88,19 @@ public class EstructuraController {
     }
 
 
-    private ArrayList<Termino> cambiarASingular(String [] terminos){
+    @RequestMapping(path="/estructura/validar", method=RequestMethod.POST)
+    public ResponseEntity validarEstructura(@RequestBody TerminoParametro[] terminos) {
+
+
+        RespuestaHttp respuesta = new RespuestaHttp();
+        for (int i=0; i < terminos.length; i++){
+            System.out.println(terminos[i].toString());
+        }
+        return respuesta.getRespuestaHttp();
+    }
+
+
+        private ArrayList<Termino> cambiarASingular(String [] terminos){
         ArrayList<Termino> term = new ArrayList<Termino>();
         for (int i = 0; i < terminos.length; i++) {
             term.add(new Termino(terminos[i]));
@@ -111,3 +123,4 @@ public class EstructuraController {
 
 
 }
+

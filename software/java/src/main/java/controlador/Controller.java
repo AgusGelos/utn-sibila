@@ -8,7 +8,9 @@ package controlador;
 import api.Respuesta;
 import conceptmanager.ConceptManager;
 import java.io.IOException;
-import ortografia.OrtographyManager;
+
+import org.json.JSONException;
+import ortografia.GrammarManager;
 
 /**
  *
@@ -17,14 +19,14 @@ import ortografia.OrtographyManager;
 public class Controller {
     
     private ConceptManager cm;
-    private OrtographyManager om;
+    private GrammarManager om;
     
     private void cargarModulos(){
         if (cm == null){
             cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
         }
         if (om == null){
-            om = new OrtographyManager(cm);
+            om = new GrammarManager(cm);
         }
     }
     
@@ -55,7 +57,7 @@ public class Controller {
      * @param res ingresada por el alumno. Solo el texto
      * @return Peso de la respuesta
      */
-    public Double calcularPesoRespuesta(String res) throws IOException{
+    public Double calcularPesoRespuesta(String res) throws IOException {
         this.cargarModulos();
         Double peso = 0.0;
         
@@ -87,7 +89,7 @@ public class Controller {
      * @param base respuesta base (del profesor). Se usa como punto de comparación
      * @return Peso de la respuesta candidata con respecto a la base
      */
-    public Double calcularPesoRespuesta(String candidata, String base) throws IOException{
+    public Double calcularPesoRespuesta(String candidata, String base) throws IOException {
         this.cargarModulos();
         Double peso = 0.0;
         

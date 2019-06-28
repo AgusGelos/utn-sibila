@@ -35,22 +35,26 @@ public class Termino
     /** Indica que el Término es un Concepto */
     public static final String tipoConcepto = "C";    
     /** Indica que el Término es una Relación */
-    public static final String tipoRelacion = "R";    
+    public static final String tipoRelacion = "R";
+    public static final String tipoIgnorar = "I";
     /** Indica que se solicita agregar un Concepto */
     public static final String addConcepto = "C+";
     /** Indica que se solicita agregar una Relación */
     public static final String addRelacion = "R+";
-    
+
+
     private String Nombre;
     private String Vista;
     private String Tipo;
     private String Accion;
     private String ErrorAccion;
     private double Peso;
+    private String sugerenciaTipo;
     /* Desplazamiento del concepto con respecto al mismo 
     concepto en la respuesta base
     */
     private Integer Delta;
+    private String raiz;
     
     /* Contiene una lista con las palabras que se pueden utilizar para corregir
     el error. Esto es para mostrar al usuario y que el decida si quiere usar
@@ -59,6 +63,7 @@ public class Termino
     private List<String> SugerenciasCorreccion=new ArrayList<>();
     private int posicionInicioEnTexto, posicionFinEnTexto;
     private String mensajeDeError;
+
 
     /**
      * Constructor.
@@ -170,7 +175,15 @@ public class Termino
     }
 //</editor-fold>
     
-    
+
+
+    public String getSugerenciaTipo(){
+        return this.sugerenciaTipo;
+    }
+
+    public void setSugerenciaTipo(String sugerencia){
+        this.sugerenciaTipo = sugerencia;
+    }
 //<editor-fold defaultstate="collapsed" desc="Getters">
     /**
      * Obtiene el tipo de término
@@ -200,6 +213,15 @@ public class Termino
             return "";
         }
         
+    }
+
+
+    public void setRaiz(String raiz){
+        this.raiz = raiz;
+    }
+
+    public String getRaiz(){
+        return this.raiz;
     }
     
     /**

@@ -418,12 +418,19 @@ public class ConceptManager {
      */
     public String getTipoTermino(Termino termino) {
         String nombre = termino.getNombre();
-        Concepto c = this.getConceptoByName(nombre);
+        System.out.print(termino.getRaiz());
+        Concepto c = this.getConceptoByName(termino.getRaiz());
+        if (c == null){
+            c = this.getConceptoByName(termino.getNombre());
+        }
         // Si encontro un concepto devolver C
         if (c != null) {
             return Termino.tipoConcepto;
         } else {
             Relacion r = this.getRelacionByName(nombre);
+            if (r == null){
+                r = this.getRelacionByName(termino.getRaiz());
+            }
             if (r != null) {
                 return Termino.tipoRelacion;
             } else {

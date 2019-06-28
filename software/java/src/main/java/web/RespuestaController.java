@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ortografia.ManejoLang;
-import ortografia.OrtographyManager;
+import ortografia.GrammarManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class RespuestaController {
         RespuestaHttp respuestaHttp = new RespuestaHttp();
 
         ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
-        OrtographyManager ortografia = new OrtographyManager(cm);
+        GrammarManager grammarManager = new GrammarManager(cm);
         ManejoLang ml = new ManejoLang();
         HttpStatus status = HttpStatus.OK;
 
@@ -72,7 +72,8 @@ public class RespuestaController {
 
 
         try{
-            respuesta = ortografia.corregirRespuesta(respuesta);
+            respuesta = grammarManager.corregirRespuesta(respuesta);
+            respuesta = grammarManager.clasificarTerminos(respuesta);
             respuesta = cm.evaluarRespuesta(respuesta);
 
             ArrayList<Termino> terminos = respuesta.getTerminos();
@@ -94,7 +95,7 @@ public class RespuestaController {
                 }
 
 
-                errorMap.put("error", termino.hasErrors());
+                errorMap.put("tiene", termino.hasErrors());
                 errorMap.put("sugerencias", termino.getSugerenciasCorreccion());
 
                 terminoMap.put("nombre",termino.getNombre());
@@ -102,11 +103,23 @@ public class RespuestaController {
 
 
 
-                String sugerenciaTipo = tipo;
-                if (sugerenciaTipo == ""){
-                    sugerenciaTipo = ml.sugerenciaTipoConcepto(termino);
+                String sugerenciaTipo = "";
+                if (tipo == "R"){
+                    sugerenciaTipo = "Relacion";
                 }
+                else if (tipo == "C"){
+                    sugerenciaTipo = "Concepto";
+                }
+
+                if (sugerenciaTipo == ""){
+                    sugerenciaTipo = termino.getSugerenciaTipo();
+                }
+
                 terminoMap.put("sugerenciaTipo", sugerenciaTipo);
+
+                terminoMap.put("raiz", termino.getRaiz());
+
+
                 terminosMap.add(terminoMap);
             }
 

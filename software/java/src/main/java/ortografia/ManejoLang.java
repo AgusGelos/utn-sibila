@@ -709,11 +709,8 @@ public class ManejoLang {
                     if (termi.getNombre().equalsIgnoreCase(textoConError)) {
                         termi.setMensajeDeError(match.getMessage());
                         termi.setSugerenciasCorreccion(match.getSuggestedReplacements());
-
                         termi.setPosicionInicioEnTexto(p0);
                         termi.setPosicionFinEnTexto(p1);
-//                        System.out.println("se encontro palabra " + term.getNombre() + " en " + p0 + " - " + p1);
-
                     }
                 }
             }
@@ -770,7 +767,7 @@ public class ManejoLang {
                             case 'A': // Adjetivos
                             case 'N': // Nombres
                                 //terminos.get(indice).setNombre(b.get(1).toUpperCase());
-                                term.setNombre(b.get(1).toUpperCase());
+                                //term.setNombre(b.get(1).toUpperCase());
                                 break;
                             case 'D':
                                 break;

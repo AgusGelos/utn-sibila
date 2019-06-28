@@ -114,7 +114,7 @@ public class LangTools
 
         ArrayList<Termino> terminos = ml.getListaDeTerminosConComplejos(aux.getTexto(),conceptos,relaciones);
         // ArrayList<Termino> singulares = ml.cambiarPluralPorSingular(terminos);
-        terminos = ml.cambiarPluralPorSingular(terminos);   
+        //terminos = ml.cambiarPluralPorSingular(terminos);
         aux.setTerminos(terminos);
 
         return aux;
