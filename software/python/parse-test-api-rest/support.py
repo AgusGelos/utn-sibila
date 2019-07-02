@@ -7,14 +7,14 @@ import requests
 
 # Limpiar pantalla
 
-
 def clear():
     os.system('cls')
 
-
 # FUNCIONES DEL PROGRAMA
 
+
 # CLASES
+
 
 class Respuesta:
     def __init__(self, id_alu, nom_alu, id_examen, id_preg, txt_res):
@@ -23,6 +23,18 @@ class Respuesta:
         self.id_examen = id_examen
         self.id_pregunta = id_preg
         self.txt_respuesta = txt_res
+
+    def __str__(self):
+        r = "ID Alumno: " + str(self.id_alumno) + '\n'
+        r += 'Nombre del Alumno: ' + self.nom_alumno + '\n'
+        r += 'ID Examen: ' + str(self.id_examen) + '\n'
+        r += 'ID Pregunta: ' + str(self.id_pregunta) + '\n'
+        r += 'Respuesta del Alumno: ' + self.txt_respuesta + '\n'
+        return r
+
+    # Muestra los datos como un vector
+    def vector(self):
+        return [self.id_alumno, self.nom_alumno, self.id_examen, self.id_pregunta, self.txt_respuesta]
 
 
 class Pregunta:
@@ -34,33 +46,23 @@ class Pregunta:
         self.v_respuestas = v_res
 
 
-def to_string_respuesta(respuesta):
-    r = "ID Alumno: " + str(respuesta.id_alumno) + '\n'
-    r += 'Nombre del Alumno: ' + respuesta.nom_alumno + '\n'
-    r += 'ID Examen: ' + str(respuesta.id_examen) + '\n'
-    r += 'ID Pregunta: ' + str(respuesta.id_pregunta) + '\n'
-    r += 'Respuesta del Alumno: ' + respuesta.txt_respuesta + '\n'
-    return r
+    def __str__(self):
+        r = 'ID Examen: ' + str(self.id_examen) + '\n'
+        r += 'ID Pregunta: ' + str(self.id_pregunta) + '\n'
+        r += 'Pregunta del profesor: ' + self.txt_pregunta + '\n'
+        for i in range(len(self.v_respuestas)):
+            r += 'Respuesta del profesor: ' + self.txt_inicio_res + ' | ' + self.v_respuestas[i] + '\n'
+        return r
 
+    # Muestra los datos como un vector
+    def vector(self, j):
+        return [self.id_examen, self.id_pregunta, self.txt_pregunta,
+                self.txt_inicio_res, self.v_respuestas[j]]
 
-def to_string_pregunta(pregunta):
-    r = 'ID Examen: ' + str(pregunta.id_examen) + '\n'
-    r += 'ID Pregunta: ' + str(pregunta.id_pregunta) + '\n'
-    r += 'Pregunta del profesor: ' + pregunta.txt_pregunta + '\n'
-    for i in range(len(pregunta.v_respuestas)):
-        r += 'Respuesta del profesor: ' + pregunta.txt_inicio_res + ' | ' + pregunta.v_respuestas[i] + '\n'
-    return r
-
-
-def show_respuestas(v):
-    for i in range(len(v)):
-        print(to_string_respuesta(v[i]))
-
-
-def show_preguntas(v):
-    for i in range(len(v)):
-        print(to_string_pregunta(v[i]))
-
+def show(v):
+    # Invoca al metodo to_string() en una lista de objetos
+    for obj in v:
+        print(str(obj))
 
 # Funcion para pasar de vector a una clase y de una clase a un vector
 
@@ -114,12 +116,12 @@ def leer_mostrar_csv(fd, divisor):
 
 def leer_respuestas_csv(fd, divisor):
     v = []
-    flag = True
+    es_primera_fila = True
     with open(fd, newline='', encoding='UTF-8') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=divisor, quotechar='|')
         for row in spamreader:
-            if flag:
-                flag = False
+            if es_primera_fila:
+                es_primera_fila = False
             else:
                 v.append(vector_a_respuesta(row))
     return v
@@ -127,12 +129,12 @@ def leer_respuestas_csv(fd, divisor):
 
 def leer_preguntas_csv(fd, divisor):
     v = []
-    flag = True
+    es_primera_fila = True
     with open(fd, newline='', encoding='UTF-8') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=divisor, quotechar='|')
         for row in spamreader:
-            if flag:
-                flag = False
+            if es_primera_fila:
+                es_primera_fila = False
             else:
                 res = vector_a_pregunta(row, v)
                 if res:
@@ -155,7 +157,8 @@ def grabar_respuestas_csv(fd, divisor, respuestas):
         spamwriter = csv.writer(csvfile, delimiter=divisor,
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
         for i in range(len(respuestas)):
-            spamwriter.writerow(respuesta_a_vector(respuestas[i]))
+            spamwriter.writerow(respuestas[i].vector())
+#            spamwriter.writerow(respuesta_a_vector(respuestas[i]))
 
 
 def grabar_preguntas_csv(fd, divisor, preguntas):
@@ -164,7 +167,8 @@ def grabar_preguntas_csv(fd, divisor, preguntas):
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
         for i in range(len(preguntas)):
             for j in range(len(preguntas[i].v_respuestas)):
-                spamwriter.writerow(pregunta_a_vector(preguntas[i], j))
+                spamwriter.writerow(preguntas[i].vector(j))
+#                spamwriter.writerow(pregunta_a_vector(preguntas[i], j))
 
 # ARCHIVOS BINARIOS
 
@@ -258,7 +262,8 @@ def archivo_para_grabacion(v, fd, op=True):
 def generar_archivo_correccion_ortografica(respuestas):
     with open('output/respuestas_correccion_ortografica.csv', newline='', mode='w') as respuestas_file:
         respuestas_writer = csv.writer(respuestas_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        respuestas_writer.writerow(['Legajo alumno', 'Alumno nombre y apellido', 'IdExamen', 'IdPregunta', 'Respuesta alumno'])
+        respuestas_writer.writerow(['Legajo alumno', 'Alumno nombre y apellido', 'IdExamen', 'IdPregunta',
+                                    'Respuesta alumno'])
 
         for entrada in respuestas:
             respuesta = entrada.txt_respuesta
@@ -276,36 +281,45 @@ def generar_archivo_correccion_ortografica(respuestas):
                 else:
                     respuesta_corregida += termino['nombre']
                 respuesta_corregida += ' '
-            respuestas_writer.writerow([entrada.id_alumno, entrada.nom_alumno, entrada.id_examen, entrada.id_pregunta, respuesta_corregida])
+            respuestas_writer.writerow([entrada.id_alumno, entrada.nom_alumno, entrada.id_examen, entrada.id_pregunta,
+                                        respuesta_corregida])
 
             print(respuesta + ' -> ' + respuesta_corregida)
+
 
 def generar_archivo_evaluacion(preguntas, respuestas):
     with open('output/respuestas_evaluacion_errores.csv', newline='', mode='w') as errores_file:
         errores_writer = csv.writer(errores_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        errores_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno', 'Codigo de Error', 'Mensaje'])
+        errores_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno',
+                                 'Codigo de Error', 'Mensaje'])
 
         with open('output/respuestas_evaluacion.csv', newline='', mode='w') as respuestas_file:
             respuestas_writer = csv.writer(respuestas_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            respuestas_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno', 'Calificacion'])
+            respuestas_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno',
+                                        'Calificacion'])
 
             print('\n')
             for entrada in respuestas:
                 respuestaAlumno = entrada.txt_respuesta
 
                 # Buscamos la pregunta correspondiente
-                preguntas_correspondientes = [x for x in preguntas if (x.id_examen == entrada.id_examen) and (x.id_pregunta == entrada.id_pregunta)]
+                preguntas_correspondientes = [x for x in preguntas if (x.id_examen == entrada.id_examen) and
+                                              (x.id_pregunta == entrada.id_pregunta)]
 
                 # print("para " + str(entrada.id_examen) + ", " + str(entrada.id_pregunta) + " " + str(len(preguntas_correspondientes)))
 
                 for pregunta in preguntas_correspondientes:
                     for respuestaBase in pregunta.v_respuestas:
-                        rqst = requests.post('http://localhost:8080/respuesta/evaluar', data = {'respuestaAlumno':pregunta.txt_inicio_res + ' ' + respuestaAlumno, 'respuestaBase':pregunta.txt_inicio_res + ' ' + respuestaBase})
+                        rqst = requests.post('http://localhost:8080/respuesta/evaluar', data =
+                        {'respuestaAlumno':pregunta.txt_inicio_res + ' ' + respuestaAlumno,
+                         'respuestaBase':pregunta.txt_inicio_res + ' ' + respuestaBase})
 
                         if rqst.status_code == 200:
+
                             # Si se proceso correctamente, va al archivo de calificacion
                             calificacion = rqst.json()['datos']['calificacion']
-                            respuestas_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta, respuestaBase, respuestaAlumno, calificacion])
+                            respuestas_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta,
+                                                        respuestaBase, respuestaAlumno, calificacion])
 
                             print(respuestaBase)
                             print(respuestaAlumno)
@@ -319,7 +333,8 @@ def generar_archivo_evaluacion(preguntas, respuestas):
                             if error_code == 500:
                                 mensaje = rqst.json()['mensaje']
 
-                            errores_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta, respuestaBase, respuestaAlumno, error_code, mensaje])
+                            errores_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta,
+                                                     respuestaBase, respuestaAlumno, error_code, mensaje])
 
                             print(respuestaBase)
                             print(respuestaAlumno)
@@ -327,76 +342,91 @@ def generar_archivo_evaluacion(preguntas, respuestas):
                             print(mensaje)
                             print('\n')
 
+# Grabar en BD de grafos
 
-def respuestas_profesor_a_DB(preguntas):
+
+def grabar_respuestas_profesor_a_DB(preguntas):
     for pregunta in preguntas:
-        respuesta_profesor_a_DB(pregunta)
+        grabar_respuesta_profesor_a_DB(pregunta)
         
 
-def respuesta_profesor_a_DB(pregunta):
+def grabar_respuesta_profesor_a_DB(pregunta):
     for respuestaBase in pregunta.v_respuestas:
         respuesta = pregunta.txt_inicio_res + " " + respuestaBase
-        respuesta_a_DB(respuesta)
+        grabar_respuesta_a_DB(respuesta)
 
-def respuesta_a_DB(respuesta):            
-            rqst = requests.post('http://localhost:8080/respuesta/corregir', data = {'respuesta':respuesta})
 
-            print('\n\n' + respuesta)
+def grabar_respuesta_a_DB(respuesta):
+    rqst = requests.post('http://localhost:8080/respuesta/corregir', data = {'respuesta':respuesta})
 
-            frase = ''
-            elementos = []
+    print('\n\n' + respuesta)
 
-            terminos = rqst.json()['datos']['terminos']
-            last_tipo = ''
-            for termino in terminos:
-                tipo = termino['tipo']
-                if(tipo == ''):
-                    # Ignoramos las sugeridas como ignorar, que no sean "error ortografico"
-                    if(termino['sugerenciaTipo'] != 'Ignorar' or termino['error']['error']):
-                        if(termino['sugerenciaTipo'] == 'Relacion'):
-                            tipo = 'R'
-                        elif(termino['sugerenciaTipo'] == 'Concepto'):
-                            tipo = 'C'
-                        else:
-                            tipo = 'C'
-                    else:
-                        tipo = 'I'
-                
-                if tipo != 'I':
-                    if last_tipo == '':
-                        last_tipo = tipo;
-                    if tipo != last_tipo:
-                        elementos.append([last_tipo, frase])
-                        frase = ''
-                        if tipo == 'C':
-                            print(') [ ', end='')
-                        else:
-                            print('] ( ', end='')
-                    
-                    frase += termino['nombre'] + ' '
-                    print(termino['nombre'], end=' ')
+    frase = ''
+    elementos = []
 
-                    last_tipo = tipo
+    terminos = rqst.json()['datos']['terminos']
 
-            elementos.append([last_tipo, frase])
+    for termino in terminos:
+        print(termino)
 
-            # Mostramos como los separamos
-            print('')
-            print(elementos)
+    last_tipo = ''
+    for termino in terminos:
+        tipo = termino['tipo']
+        if tipo == '':
+            # Ignoramos las sugeridas como ignorar, que no sean "error ortografico"
+            if termino['sugerenciaTipo'] != 'Ignorar' or termino['error']['error']:
+                if termino['sugerenciaTipo'] == 'Relacion':
+                    tipo = 'R'
+                elif termino['sugerenciaTipo'] == 'Concepto':
+                    tipo = 'C'
+                else:
+                    tipo = 'C'
+            else:
+                tipo = 'I'
 
-            # Conceptos primero
-            for x in range(len(elementos)):
-                if elementos[x][0] == 'C':
-                    rqst = requests.post('http://localhost:8080/concepto', data = {'nombre':elementos[x][1]})
-                    print(elementos[x][1])
+        if tipo != 'I':
+            if last_tipo == '':
+                last_tipo = tipo
+            if tipo != last_tipo:
+                elementos.append([last_tipo, frase])
+                frase = ''
+                if tipo == 'C':
+                    print(') [ ', end='')
+                else:
+                    print('] ( ', end='')
 
-            # Relaciones despues
-            for x in range(len(elementos)):
-                if elementos[x][0] == 'R':
-                    if x+1 < len(elementos):
-                        origen = str(elementos[x-1][1])
-                        destino = str(elementos[x+1][1])
-                        relacion = str(elementos[x][1])
-                        rqst = requests.post('http://localhost:8080/estructura', data = {"conceptoOrigen":origen, "conceptoDestino":destino, "relacion":relacion})
+            if termino['tipo'] != '':
+                print('_', end='')
+            frase += termino['nombre'] + ' '
+            print(termino['nombre'], end=' ')
 
-                        print(elementos[x-1][1] + ' -> ' + elementos[x][1] + ' -> ' + elementos[x+1][1])
+            last_tipo = tipo
+
+    elementos.append([last_tipo, frase])
+
+    # Mostramos como los separamos
+    print('')
+    print(elementos)
+
+
+    # Conceptos primero
+    for x in range(len(elementos)):
+        if elementos[x][0] == 'C':
+            #rqst = requests.post('http://localhost:8080/concepto', data = {'nombre':elementos[x][1]})
+            #print(elementos[x][1])
+            pass
+
+"""
+    # Relaciones despues
+    for x in range(len(elementos)):
+        if elementos[x][0] == 'R':
+            if x+1 < len(elementos):
+                origen = str(elementos[x-1][1])
+                destino = str(elementos[x+1][1])
+                relacion = str(elementos[x][1])
+                #rqst = requests.post('http://172.16.80.35:8080/estructura/', data = {"conceptoOrigen":origen,
+                 "conceptoDestino":destino, "relacion":relacion})
+                #print(rqst.status_code)
+                #print(rqst.json())
+                #print(elementos[x-1][1] + ' -> ' + elementos[x][1] + ' -> ' + elementos[x+1][1])
+"""

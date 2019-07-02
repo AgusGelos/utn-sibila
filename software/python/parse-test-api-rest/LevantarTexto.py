@@ -12,20 +12,26 @@ def test():
 
     while True:
         print('Menu:')
+        print('0) Salir')
         print('1) Leer archivo')
         print('2) Mostrar archivo en memoria')
         print('3) Grabar archivo de texto')
-        print('4) Archivo Binario')
+        print('4) Grabar archivo Binario')
+        print('-------------------------')
         print('5) Generar archivo con "correccion ortografica" o "2da chance"')
         print('6) Generar archivo de evaluacion')
         print('7) Interpretar respuestas como grafos')
-        print('8) Salir')
+        print('8) Probar oracion')
 
         op = input('Seleccione: ')
         clear()
 
+        # Salir
+        if op == '0':
+            break
+
         # Leer archivo
-        if op == '1':
+        elif op == '1':
             op1 = input("Leer Archivo: \n\t1)Respuestas \n\t2)Preguntas \n\t*)Salir \nSeleccione: ")
 
             if op1 == '1':
@@ -40,14 +46,14 @@ def test():
             if op1 == '1':
                 if len(respuestas) != 0:
                     print("Respuesta:\n")
-                    show_respuestas(respuestas)
+                    show(respuestas)
                 else:
                     print("No se han cargando respuestas")
 
             elif op1 == '2':
                 if len(preguntas) != 0:
                     print("Preguntas:\n")
-                    show_preguntas(preguntas)
+                    show(preguntas)
                 else:
                     print("No se han cargando preguntas")
 
@@ -103,13 +109,14 @@ def test():
                 preguntas = archivo_para_lectura(fd_examen, False)
                 print(len(preguntas))
 
-            respuestas_profesor_a_DB(preguntas)
+            grabar_respuestas_profesor_a_DB(preguntas)
 
         elif op == '8':
-            break
+            oracion = input('Oracion? ')
+            grabar_respuesta_a_DB(oracion)
 
         else:
-            print('Error! Seleccion incorrecta')
+            print('Seleccion Incorrecta!')
         input()
         clear()
 
