@@ -1,0 +1,13 @@
+{
+	"nodes": [
+		{
+			"data": {
+				"id": "#11:0",
+				"name": "POO",
+				"weight": 100,
+				"colorCode": "blue",
+				"shapeType": "roundrectangle"
+			}
+		}
+	]
+}
