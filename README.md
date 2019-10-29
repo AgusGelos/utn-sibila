@@ -6,15 +6,15 @@ Pasos levantar el proyecto
 
 2.Descargar o clonar el proyecto.
 
-3.En la carpeta angular-2-cytoscape donde estan los archivos de Angular, abrir con un CMD y ejecutar NPM INSTALL. Con esto se instalaran todas las dependencias necesarias.
+3.En la carpeta front-angular donde estan los archivos de Angular, abrir con un CMD y ejecutar NPM INSTALL. Con esto se instalaran todas las dependencias necesarias.
 
-4.En la carpeta Back-nodeJS abrir con un CMD y ejecutar NPM INSTALL. Con esto se instalaran todas las dependencias necesarias.
+4.En la carpeta back-nodejs abrir con un CMD y ejecutar NPM INSTALL. Con esto se instalaran todas las dependencias necesarias.
 
 3.Levantar la base de datos orientDB -->carpeta bin-->server.bat
 
-4.Levantar el server en nodeJS. En la carpeta Back-nodeJS abrir con un CMD, y ejecutar en la consola node index.js
+4.Levantar el server en nodeJS. En la carpeta back-nodejs abrir con un CMD, y ejecutar en la consola node index.js
 
-5.Levantar el front-end. En la carpeta angular-2-cytoscape abrir con un CMD y ejecutar en la consola ng serve.
+5.Levantar el front-end. En la carpeta front-angular abrir con un CMD y ejecutar en la consola ng serve.
 
 6.Abrir el navegador en htpp://localhost:4200
 
