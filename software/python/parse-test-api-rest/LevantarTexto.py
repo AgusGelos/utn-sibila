@@ -6,7 +6,8 @@ def test():
         = leer_configuracion_csv('config.txt', ':')
     respuestas = []
     preguntas = []
-    
+
+
     if not os.path.exists('output'):
         os.mkdir('output')
 

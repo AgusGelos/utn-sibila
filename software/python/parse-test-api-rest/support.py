@@ -276,7 +276,7 @@ def generar_archivo_correccion_ortografica(respuestas):
             terminos = rqst.json()['datos']['terminos']
             for termino in terminos:
                 # Si hay un error ortografico
-                if termino['error']['error']:
+                if termino['error']['tiene']:
                     respuesta_corregida += termino['error']['sugerencias'][0]
                 else:
                     respuesta_corregida += termino['nombre']
@@ -308,12 +308,15 @@ def generar_archivo_evaluacion(preguntas, respuestas):
 
                 # print("para " + str(entrada.id_examen) + ", " + str(entrada.id_pregunta) + " " + str(len(preguntas_correspondientes)))
 
+                # Ver si esta implementado en la API
                 for pregunta in preguntas_correspondientes:
                     for respuestaBase in pregunta.v_respuestas:
                         rqst = requests.post('http://localhost:8080/respuesta/evaluar', data =
                         {'respuestaAlumno':pregunta.txt_inicio_res + ' ' + respuestaAlumno,
                          'respuestaBase':pregunta.txt_inicio_res + ' ' + respuestaBase})
 
+                        print("Ver Json: ", rqst.json())
+                        print("Status code", rqst.status_code)
                         if rqst.status_code == 200:
 
                             # Si se proceso correctamente, va al archivo de calificacion
@@ -364,18 +367,21 @@ def grabar_respuesta_a_DB(respuesta):
     frase = ''
     elementos = []
 
+    print(rqst.json())
     terminos = rqst.json()['datos']['terminos']
 
+    print('Terminos:')
     for termino in terminos:
         print(termino)
 
+    print('Desglose')
     last_tipo = ''
     for termino in terminos:
         tipo = termino['tipo']
         if tipo == '':
             # Ignoramos las sugeridas como ignorar, que no sean "error ortografico"
-            if termino['sugerenciaTipo'] != 'Ignorar' or termino['error']['error']:
-                if termino['sugerenciaTipo'] == 'Relacion':
+            if termino['sugerenciaTipo'] != 'Ignorar' or termino['error']['tiene']:
+                if termino['sugerenciaTipo'] == 'Relación':
                     tipo = 'R'
                 elif termino['sugerenciaTipo'] == 'Concepto':
                     tipo = 'C'
