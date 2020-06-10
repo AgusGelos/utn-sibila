@@ -1,0 +1,51 @@
+FROM python:3.6-slim-buster as builder
+
+LABEL maintainer="mcasatti@gmail.com"
+
+ENV SPACY_VERSION    2.2.3
+
+# config
+RUN mkdir -p /var/www \
+    && apt-get update \
+    && apt-get install -y \
+        build-essential \
+        python-dev \
+        git \
+        python3-pip \
+    && pip3 install -U pip
+
+# spacy
+RUN \
+    pip install -U jieba \
+        ipython \
+        pandas \
+        requests \
+        chardet \
+        spacy==${SPACY_VERSION} \
+    && python3 -m spacy download es_core_news_sm \
+    && apt install -y python-dev libhunspell-dev
+
+COPY ./spacy_server/requirements.txt ./requirements.txt 
+
+RUN pip3 install --prefix=/install --ignore-installed -Ur requirements.txt
+
+# Runtime base image
+FROM python:3.6-slim-buster
+
+# Installing escential libraries for runtime env
+RUN apt update \
+ && apt install --no-install-recommends -y libhunspell-1.7.0 \
+ && apt autoremove -y 
+
+# Copy the dependencies
+COPY --from=builder /install /usr/local
+
+# Copy Spicy
+COPY ./spacy_server ./spacy_server
+
+# Define working directory.
+WORKDIR /spacy_server
+
+EXPOSE 5000
+
+CMD ["python3", "app.py"]

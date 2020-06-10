@@ -61,8 +61,10 @@ public class EstructuraController {
 
 
 
-                ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
-
+                String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+                //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+                ConceptManager cm = new ConceptManager(url, "admin", "admin");
+    
 
                 ArrayList<Termino> co = this.cambiarASingular(conceptoOrigen.toUpperCase().split(" "));
                 conceptoOrigen = this.aString(co);

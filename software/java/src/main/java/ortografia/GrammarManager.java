@@ -50,8 +50,8 @@ public class GrammarManager {
         // LangTools lt = new LangTools();
         // respuesta = lt.CheckRespuesta(respuesta, cm.getConceptosComplejos(), cm.getRelacionesComplejas());
         try {
-            String recurso = "correccion";
-            URL url = new URL(Config.WEB_SERVER_PYTHON + recurso);
+            String recurso = "/correccion";
+            URL url = new URL(Config.HOST_SPACY + recurso);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
             con.setDoOutput(true);
@@ -60,7 +60,7 @@ public class GrammarManager {
             con.setRequestProperty("Accept", "application/json");
 
             String datajson =  "{\"txt\": \""+respuesta.getTexto()+"\"}";
-
+            System.out.println ("JSON Data:"+datajson);
 
             OutputStream os = con.getOutputStream();
             os.write(datajson.getBytes("UTF-8"));
@@ -122,8 +122,8 @@ public class GrammarManager {
 
 
         try {
-            String recurso = "tokenizacion";
-            URL url = new URL(Config.WEB_SERVER_PYTHON + recurso);
+            String recurso = "/tokenizacion";
+            URL url = new URL(Config.HOST_SPACY + recurso);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
             con.setDoOutput(true);
@@ -132,7 +132,7 @@ public class GrammarManager {
             con.setRequestProperty("Accept", "application/json");
 
             String datajson =  "{\"txt\": \""+respuesta.getTexto()+"\"}";
-
+            System.out.println ("JSON Data:"+datajson);
 
             OutputStream os = con.getOutputStream();
             os.write(datajson.getBytes("UTF-8"));

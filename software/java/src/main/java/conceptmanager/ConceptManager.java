@@ -189,6 +189,9 @@ public class ConceptManager {
      * @return
      */
     public Relacion getRelacionByName(String nombre) {
+        // Si no viene un nombre devolver null directamente
+        if (nombre == null)
+            return null;
         // TODO: Mejorar mediante consulta directa.
         // Por ahora funciona obteniendo todas, iterando y devolviendo la que coincida
         ArrayList<Relacion> relaciones = this.getRelaciones();
@@ -208,6 +211,9 @@ public class ConceptManager {
      * @return {@link Concepto} o null si el nombre no existe
      */
     public Concepto getConceptoByName(String Nombre) {
+        // Si no viene un nombre devolver null directamente
+        if (Nombre == null)
+            return null;
         Concepto c;
         OrientGraph db = Factory.getTx();
         Iterable<Vertex> vi = db.getVertices("Concepto.Nombre", Nombre.toUpperCase());
@@ -232,6 +238,9 @@ public class ConceptManager {
      * @return {@link Vertex} o null si el nombre no existe
      */
     public Vertex getConceptoVertexByName(String Nombre) {
+        // Si no viene un nombre devolver null directamente
+        if (Nombre == null)
+            return null;
         Vertex v;
         OrientGraph db = Factory.getTx();
         Iterable<Vertex> vi = db.getVertices("Concepto.Nombre", Nombre.toUpperCase());
@@ -418,18 +427,19 @@ public class ConceptManager {
      */
     public String getTipoTermino(Termino termino) {
         String nombre = termino.getNombre();
-        System.out.print(termino.getRaiz());
-        Concepto c = this.getConceptoByName(termino.getRaiz());
+        String raiz = termino.getRaiz();
+        System.out.println(String.format("ConceptManager::getTipoTermino nombre=%s raiz=%s",nombre,raiz));
+        Concepto c = this.getConceptoByName(raiz);
         if (c == null){
-            c = this.getConceptoByName(termino.getNombre());
+            c = this.getConceptoByName(nombre);
         }
         // Si encontro un concepto devolver C
         if (c != null) {
             return Termino.tipoConcepto;
         } else {
-            Relacion r = this.getRelacionByName(nombre);
+            Relacion r = this.getRelacionByName(raiz);
             if (r == null){
-                r = this.getRelacionByName(termino.getRaiz());
+                r = this.getRelacionByName(nombre);
             }
             if (r != null) {
                 return Termino.tipoRelacion;

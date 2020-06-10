@@ -13,10 +13,8 @@ def hello_world():
 @app.route('/correccion', methods=['POST'])
 def correccion():
     # texto = request.args.get("txt", "")
-
     try:
         data = request.json
-
         texto = data.get('txt')
         ortografia = Ortografia()
         correcciones, error = ortografia.corregir(texto)
@@ -42,7 +40,6 @@ def correccion():
 @app.route('/tokenizacion', methods=['POST'])
 def tokenize():
     data = request.json
-
     texto = data.get('txt')
     tokens = ManejadorSpacy.analizar_texto(texto)
     datos_texto = {
@@ -64,4 +61,7 @@ def tokenize():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(
+        host="0.0.0.0",
+        port=5000
+        )

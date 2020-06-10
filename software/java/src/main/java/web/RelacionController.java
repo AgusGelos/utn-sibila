@@ -24,8 +24,9 @@ public class RelacionController {
         RespuestaHttp respuesta  = new RespuestaHttp();
 
         try {
-
-            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+            //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            ConceptManager cm = new ConceptManager(url, "admin", "admin");
             ArrayList<Relacion> relaciones = cm.getRelaciones();
 
             ArrayList<HashMap> relacionesBody = new ArrayList<>();
@@ -82,7 +83,9 @@ public class RelacionController {
 
         try {
 
-            ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
+            String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+            //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            ConceptManager cm = new ConceptManager(url, "admin", "admin");
 
             Relacion relacion = cm.getRelacionByName(nombre);
             HashMap<String, Object> relacionMap = new HashMap<>();

@@ -1,0 +1,15 @@
+POST http://172.17.0.3:5000/correccion HTTP/1.1
+content-type: application/json
+
+{
+    "txt": "Esta es una prueva a ber si corrije el tecto"
+}
+
+###
+
+POST http://localhost:5000/correccion HTTP/1.1
+content-type: application/json
+
+{
+    "txt": "Esta es una prueva a ber si corrije el tecto"
+}

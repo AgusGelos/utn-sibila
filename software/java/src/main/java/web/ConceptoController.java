@@ -23,7 +23,10 @@ public class ConceptoController {
         RespuestaHttp respuesta = new RespuestaHttp();
 
         try {
-            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+            System.out.println("Conectando a : "+url);
+            //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            ConceptManager cm = new ConceptManager(url, "admin", "admin");
             ArrayList<Concepto> conceptos = cm.getConceptos();
             ArrayList<HashMap> conceptosBody = new ArrayList<>();
 
@@ -61,7 +64,9 @@ public class ConceptoController {
 
         RespuestaHttp respuesta = new RespuestaHttp();
 
-        ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
+        String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+        //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+        ConceptManager cm = new ConceptManager(url, "admin", "admin");
         Concepto concepto = new Concepto("",nombre);
 
 
@@ -84,7 +89,9 @@ public class ConceptoController {
 
         RespuestaHttp respuesta = new RespuestaHttp();
         try {
-            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+            //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            ConceptManager cm = new ConceptManager(url, "admin", "admin");
 
             Concepto concepto = cm.getConceptoByName(nombre);
             HashMap<String, Object> conceptoMap = new HashMap<>();
@@ -119,7 +126,9 @@ public class ConceptoController {
 
 
         try {
-            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+            //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            ConceptManager cm = new ConceptManager(url, "admin", "admin");
 
 
             Concepto concepto = cm.getConceptoByName(nombre);
@@ -151,7 +160,9 @@ public class ConceptoController {
         RespuestaHttp respuesta = new RespuestaHttp();
 
         try {
-            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+            //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            ConceptManager cm = new ConceptManager(url, "admin", "admin");
 
             Concepto concepto = cm.getConceptoByName(nombre);
             String mensaje = "";
@@ -190,7 +201,9 @@ public class ConceptoController {
 
     @RequestMapping(path="/concepto/{nombreConcepto}/equivalencias", method=RequestMethod.GET)
     public ResponseEntity<HashMap> getEquivalenciasByConcepto(@PathVariable("nombreConcepto") String nombre){
-        ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
+        String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+        //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+        ConceptManager cm = new ConceptManager(url, "admin", "admin");
 
         Concepto concepto = cm.getConceptoByName(nombre);
         HashMap<String, Object> equivalencias = new HashMap();
@@ -225,7 +238,9 @@ public class ConceptoController {
         RespuestaHttp respuestaHttp = new RespuestaHttp();
 
         try {
-            ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+            //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            ConceptManager cm = new ConceptManager(url, "admin", "admin");
             cm.addEquivalencia(concepto, nombreEquivalencia, pesoEquivalencia);
             respuestaHttp.tipoOk();
 

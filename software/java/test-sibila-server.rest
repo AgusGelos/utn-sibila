@@ -1,0 +1,33 @@
+
+POST http://172.28.0.1:5000/correccion HTTP/1.1
+content-type: application/json
+
+{
+    "txt": "Esta es una prueva a ber si corrije el tecto"
+}
+
+###
+
+GET http://172.28.0.1:8080/conceptos HTTP/1.1
+content-type: application/json
+
+{
+}
+
+###
+
+POST http://localhost:8080/respuesta/evaluar HTTP/1.1
+Content-Type: application/json
+
+{
+    "respuestaAlumno": "",
+    "respuestaBase": "El paradigma tipo POO se basa en objeto que tiene atributo y método"
+}
+
+###
+GET http://localhost:8080/conceptos HTTP/1.1
+Content-Type: application/json
+
+{
+    
+}

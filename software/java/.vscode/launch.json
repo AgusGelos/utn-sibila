@@ -1,0 +1,76 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (CurrentFile)",
+            "request": "launch",
+            "mainClass": "${file}",
+            "env": {
+                "SIBILA_ORIENT_HOST" : "http://172.17.0.2",
+                "SIBILA_SPACY_HOST"  : "http://172.17.0.3:5000"
+            },
+            /*"args": [
+                "-hodb", "localhost",
+                "--host-spacy", "localhost"
+             ]*/
+        },
+        /*
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - testEnv",
+            "request": "launch",
+            "mainClass": "testEnv",
+            "projectName": "sibila"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Current File - Params",
+            "request": "launch",
+            "mainClass": "${file}",
+            "args": [
+                "-hodb", "localhost",
+                "--host-spacy", "localhost"
+             ]
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Current File - Environment",
+            "request": "launch",
+            "mainClass": "${file}",
+            "env": {
+                "SIBILA_ORIENT_HOST" : "localhost",
+                "SIBILA_SPACY_HOST"  : "localhost"
+            }
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-MainVertexVector<sibila>",
+            "request": "launch",
+            "mainClass": "mainjframe.MainVertexVector",
+            "projectName": "sibila"
+        },
+        */
+        {
+            "type": "java",
+            "name": "Debug frmMain <sibila>",
+            "request": "launch",
+            "mainClass": "mainjframe.frmMain",
+            "projectName": "sibila"
+        },
+        {
+            "type": "java",
+            "name": "Debug MainWeb <sibila>",
+            "request": "launch",
+            "mainClass": "web.MainWeb",
+            "env": {
+                "SIBILA_ORIENT_HOST" : "172.17.0.2",
+                "SIBILA_SPACY_HOST"  : "http://172.17.0.3:5000"
+            },
+            "projectName": "sibila"
+        }
+    ]
+}

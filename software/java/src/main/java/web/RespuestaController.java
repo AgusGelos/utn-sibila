@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+import web.RespuestaParams;
 
 @RestController
 public class RespuestaController {
@@ -24,16 +24,22 @@ public class RespuestaController {
 
 
     @RequestMapping(path="/respuesta/evaluar", method=RequestMethod.POST)
-    public ResponseEntity evaluarRespuesta(@RequestParam("respuestaAlumno") String respuestaAlumno, @RequestParam("respuestaBase") String respuestaBase){
+    public ResponseEntity evaluarRespuesta(
+        //@RequestParam("respuestaAlumno") String respuestaAlumno, 
+        //@RequestParam("respuestaBase") String respuestaBase,
+        @RequestBody RespuestaParams params){
+
+        String respuestaAlumno = params.respuestaAlumno;
+        String respuestaBase = params.respuestaBase;
 
         RespuestaHttp respuesta = new RespuestaHttp();
 
         try {
             Controller controller = new Controller();
             HttpStatus status = HttpStatus.OK;
-            Double calificacion = -1.0;
-
-            respuesta.agregarDato("calificacion", controller.calcularCalificaciónRespuesta(respuestaAlumno, respuestaBase));
+            //Double calificacion = -1.0;
+            Double calificacion = controller.calcularCalificaciónRespuesta(respuestaAlumno, respuestaBase);   
+            respuesta.agregarDato("calificacion", calificacion);
             respuesta.tipoOk();
         } catch (Exception e){
             respuesta.setMensaje(e.getMessage());
@@ -60,7 +66,10 @@ public class RespuestaController {
 
         RespuestaHttp respuestaHttp = new RespuestaHttp();
 
-        ConceptManager cm = new ConceptManager ("remote:localhost/PPR","admin","admin");
+        String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+        System.out.println("Conectando a : "+url);
+        //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+        ConceptManager cm = new ConceptManager(url, "admin", "admin");
         GrammarManager grammarManager = new GrammarManager(cm);
         ManejoLang ml = new ManejoLang();
         HttpStatus status = HttpStatus.OK;

@@ -23,7 +23,9 @@ public class Controller {
     
     private void cargarModulos(){
         if (cm == null){
-            cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            String url = String.format("remote:%s/PPR",web.Config.HOST_ORIENTDB);
+            //ConceptManager cm = new ConceptManager("remote:localhost/PPR", "admin", "admin");
+            cm = new ConceptManager(url, "admin", "admin");
         }
         if (om == null){
             om = new GrammarManager(cm);
@@ -74,7 +76,10 @@ public class Controller {
             respuesta = cm.findRouteRespuesta(respuesta);
             
             //Calculamos el peso de la respuesta
-            peso = respuesta.calcularPeso(respuesta);
+            //(Solo si findRoute encontró el primer concepto
+            // si no no se puede evaluar)
+            if (respuesta != null)
+                peso = respuesta.calcularPeso(respuesta);
         }
         
         return peso;
