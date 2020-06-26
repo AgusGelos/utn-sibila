@@ -1,19 +1,34 @@
 plugins {
+    id 'org.springframework.boot' version '2.1.3.RELEASE'
     id 'java'
 }
 
-group 'frc.utn.edu.ar'
-version '0.5-dev'
+apply plugin: 'io.spring.dependency-management'
 
-sourceCompatibility = 1.8
+
+group 'frc.utn.edu.ar'
+version '0.6-dev'
+
+bootJar {
+    mainClassName = 'web.MainWeb'
+}
+
 
 repositories {
     mavenCentral()
     jcenter()
 }
 
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // https://mvnrepository.com/artifact/commons-cli/commons-cli
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+
     compile group: 'org.languagetool', name: 'languagetool-core', version: '4.3'
     compile group: 'org.languagetool', name: 'language-es', version: '4.3'
     compile group: 'com.orientechnologies', name: 'orientdb-core', version: '3.0.10'
@@ -22,4 +37,8 @@ dependencies {
     compile group: 'org.graphstream', name: 'gs-core', version: '1.3'
     compile group: 'org.graphstream', name: 'gs-ui', version: '1.3'
     compile group: 'org.graphstream', name: 'gs-algo', version: '1.3'
+    compile group: 'org.json', name: 'json', version: '20190722'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

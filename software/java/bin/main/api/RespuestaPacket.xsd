@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:simpleType name="NombreType">
+        <xs:restriction base='xs:string'/>
+    </xs:simpleType>
+    <xs:simpleType name="TipoType">
+        <xs:restriction base='xs:string'>
+            <xs:enumeration value=""/>
+            <xs:enumeration value="C"/>
+            <xs:enumeration value="R"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name='AccionType'>
+        <xs:restriction base='xs:string'>
+            <xs:enumeration value='' />
+            <xs:enumeration value='C+' />
+            <xs:enumeration value='R+' />    
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PesoType">
+        <xs:restriction base='xs:decimal'>
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="1" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name='Termino'>
+        <xs:sequence>
+            <xs:element name='Nombre' type='NombreType' />
+            <xs:element name='Tipo' type='TipoType' />
+            <xs:element name='Accion' type='AccionType' />
+            <xs:element name='ErrorAccion' type='xs:string' />
+            <xs:element name='Peso' type='PesoType' minOccurs='0' maxOccurs='1'/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name='Respuesta'>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element  name='Termino' type='Termino' minOccurs='1' maxOccurs='unbounded' />
+            </xs:sequence>
+            <xs:attribute name="Secuencia" type="xs:positiveInteger" use="required"/>
+            <xs:attribute name='Peso' type='PesoType' use='optional'/>
+       </xs:complexType>
+    </xs:element>      
+</xs:schema>

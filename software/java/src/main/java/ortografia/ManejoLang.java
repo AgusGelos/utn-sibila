@@ -107,9 +107,29 @@ public class ManejoLang {
         try {
             List<AnalyzedSentence> ana = langT.analyzeText(text);
             for (AnalyzedSentence ana1 : ana) {
+                // ana1.getTokens() nos devuelve los tokens de todas las palabras
                 AnalyzedTokenReadings[] tokens = ana1.getTokens();
+
+                // Recorremos los tokens de cada palabra
                 for (AnalyzedTokenReadings token : tokens) {
-                    readings.add(token.getAnalyzedToken(0));
+
+                    AnalyzedToken tokenPriorizado = token.getAnalyzedToken(0);
+
+                    // Comienzo indice 1
+                    // Si no existe más de un token, entonces no hay nada que priorizar
+                    for (int i = 1; i < token.getReadingsLength();i++){
+                        AnalyzedToken tokenAnalizado = token.getAnalyzedToken(i);
+                        if (tokenAnalizado.getPOSTag().charAt(0) == 'V'){
+                            tokenPriorizado = tokenAnalizado;
+                        }
+                        //System.out.println(tokenAnalizado.getToken());
+                    }
+
+                    readings.add(tokenPriorizado);
+
+
+
+
 
                 }
             }
@@ -178,10 +198,13 @@ public class ManejoLang {
     }
 
     private ArrayList<String> getCodigoClasificacion(String texto) {
+
         ArrayList<String> tags = new ArrayList<String>();
         for (AnalyzedToken reading : this.getReadings(texto)) {
             tags.add(reading.getPOSTag());
+
         }
+
         return tags;
     }
 
@@ -686,11 +709,8 @@ public class ManejoLang {
                     if (termi.getNombre().equalsIgnoreCase(textoConError)) {
                         termi.setMensajeDeError(match.getMessage());
                         termi.setSugerenciasCorreccion(match.getSuggestedReplacements());
-
                         termi.setPosicionInicioEnTexto(p0);
                         termi.setPosicionFinEnTexto(p1);
-//                        System.out.println("se encontro palabra " + term.getNombre() + " en " + p0 + " - " + p1);
-
                     }
                 }
             }
@@ -714,7 +734,7 @@ public class ManejoLang {
     public void ignorarPalabras() {
         for (Rule rule : langT.getAllActiveRules()) {
             if (rule instanceof SpellingCheckRule) {
-                List<String> wordsToIgnore = Arrays.asList("POO", "poo", "tupla", "caracteristica", "implementación");
+                List<String> wordsToIgnore = Arrays.asList("POO", "poo", "tupla", "caracteristica", "implementación", "ES UN");
                 ((SpellingCheckRule) rule).addIgnoreTokens(wordsToIgnore);
             }
         }
@@ -747,7 +767,7 @@ public class ManejoLang {
                             case 'A': // Adjetivos
                             case 'N': // Nombres
                                 //terminos.get(indice).setNombre(b.get(1).toUpperCase());
-                                term.setNombre(b.get(1).toUpperCase());
+                                //term.setNombre(b.get(1).toUpperCase());
                                 break;
                             case 'D':
                                 break;
@@ -770,6 +790,7 @@ public class ManejoLang {
     public String sugerenciaTipoConcepto(Termino termino) {
         String salida = "";
         ArrayList<String> codigo = getCodigoClasificacion(termino.getNombre());
+
         for (String codigos : codigo) {
 
             if (codigos != null) {

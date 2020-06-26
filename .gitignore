@@ -56,3 +56,5 @@ hs_err_pid*
 /graphviz
 
 software/doc/source-doc/html/
+
+orientdb/

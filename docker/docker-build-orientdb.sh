@@ -1,0 +1,1 @@
+docker build --tag mcasatti/sibila-orientdb:latest --file Dockerfile-orientdb ../.
