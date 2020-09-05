@@ -58,3 +58,5 @@ hs_err_pid*
 software/doc/source-doc/html/
 
 orientdb/
+
+software/graph-view/

@@ -1,1 +1,1 @@
-docker build --tag mcasatti/sibila-java:latest --file Dockerfile-sibila ../.
+docker build --tag mcasatti/sibila-java:latest --tag 305402192421.dkr.ecr.sa-east-1.amazonaws.com/sibila-java:latest --file Dockerfile-sibila ../.
