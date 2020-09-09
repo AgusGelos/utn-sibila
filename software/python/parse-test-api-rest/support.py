@@ -2,7 +2,29 @@ import pickle
 import os
 import csv
 import requests
+from enum import Enum
 
+# fd_res_txt, fd_todo_bin, fd_res_inc_ort, fd_res_cor, fd_examen, fd_g_res_txt, fd_g_preg_txt, url_local, url_serv \
+#         = leer_configuracion_csv('config.txt', ':')
+
+# Constantes de config
+def leer_configuracion_csv(fd, divisor):
+    v = []
+    configuracion = {}
+    with open(fd, newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=divisor, quotechar='|')
+        for row in spamreader:
+            v.append(row[1])
+            configuracion[row[1]] = row[2]
+    return configuracion
+
+config = leer_configuracion_csv('config.txt', '~')
+
+def url_servidor(local):
+    if local:
+        return config['url_local']
+    else:
+        return config['url_serv']
 # FUNCIONES BASICAS
 
 # Limpiar pantalla
@@ -10,8 +32,26 @@ import requests
 def clear():
     os.system('cls')
 
-# FUNCIONES DEL PROGRAMA
+    # FUNCIONES DEL PROGRAMA
 
+class Color(Enum):
+    ROJO = chr(27) + "[0:31m"
+    VERDE = chr(27) + "[0:32m"
+    AZUL = chr(27) + "[0:34m"
+    BLANCO = chr(27) + "[0:0m"
+    NEGRITA = chr(27) + "[1:0m"
+    RESALTAR = chr(27) + "[0:30m"
+    SUBRAYAR = chr(27) + "[4:m"
+
+class Subrayar(Enum):
+    ROJO = chr(27) + "[4:31m"
+    VERDE = chr(27) + "[4:32m"
+    AZUL = chr(27) + "[4:34m"
+    BLANCO = chr(27) + "[4:0m"
+    RESALTAR = chr(27) + "[4:30m"
+
+def colorear(texto, color=Color.ROJO):
+    return color.value + str(texto) + Color.BLANCO.value
 
 # CLASES
 
@@ -143,15 +183,6 @@ def leer_preguntas_csv(fd, divisor):
     return v
 
 
-def leer_configuracion_csv(fd, divisor):
-    v = []
-    with open(fd, newline='') as csvfile:
-        spamreader = csv.reader(csvfile, delimiter=divisor, quotechar='|')
-        for row in spamreader:
-            v.append(row[1])
-    return v
-
-
 def grabar_respuestas_csv(fd, divisor, respuestas):
     with open(fd, 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=divisor,
@@ -259,7 +290,7 @@ def archivo_para_grabacion(v, fd, op=True):
         print("No se han cargado preguntas")
 
 # A partir del set de respuestas, genera un archivo de esas mismas respuestas, corregidas
-def generar_archivo_correccion_ortografica(respuestas):
+def generar_archivo_correccion_ortografica(respuestas, url_local=True):
     with open('output/respuestas_correccion_ortografica.csv', newline='', mode='w') as respuestas_file:
         respuestas_writer = csv.writer(respuestas_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         respuestas_writer.writerow(['Legajo alumno', 'Alumno nombre y apellido', 'IdExamen', 'IdPregunta',
@@ -268,12 +299,18 @@ def generar_archivo_correccion_ortografica(respuestas):
         for entrada in respuestas:
             respuesta = entrada.txt_respuesta
             respuesta_corregida = ''
-            
+
             # Enviamos la respuesta a corregir
-            rqst = requests.post('http://localhost:8080/respuesta/corregir', data = {'respuesta':respuesta})
+            rqst = requests.post(url_servidor(url_local) + '/respuesta/corregir', data = {'respuesta':respuesta})
 
             # Tomamos los terminos
+            # todo ver porque el campo de terminos esta vacio
             terminos = rqst.json()['datos']['terminos']
+
+            # Ver resultados del json
+            print(rqst.json())
+
+            # Como no hay terminos no entra aqui
             for termino in terminos:
                 # Si hay un error ortografico
                 if termino['error']['tiene']:
@@ -281,13 +318,50 @@ def generar_archivo_correccion_ortografica(respuestas):
                 else:
                     respuesta_corregida += termino['nombre']
                 respuesta_corregida += ' '
+
+
+            # Se escribe las respuestas corregidas en un archivo
             respuestas_writer.writerow([entrada.id_alumno, entrada.nom_alumno, entrada.id_examen, entrada.id_pregunta,
-                                        respuesta_corregida])
+                                         respuesta_corregida])
 
-            print(respuesta + ' -> ' + respuesta_corregida)
+            # Muestra pregunta y respuesta corregida
+            # print(respuesta + ' -> ' + respuesta_corregida)
+            mostrar_correccion_ortografica(terminos)
 
 
-def generar_archivo_evaluacion(preguntas, respuestas):
+
+# Muestra las respuestas con sus correcciones descartando las respuestas vacias y resaltando la palabra corregida
+def mostrar_correccion_ortografica(terminos):
+    respuesta = ''
+    respuesta_corregida = ''
+    # Indica si se realizo alguna correccion
+    correccion = False
+    for termino in terminos:
+        # Si hay un error ortografico
+        if termino['error']['tiene']:
+            # Marco la palabra corregida
+            respuesta_corregida += colorear(termino['error']['sugerencias'][0], Color.AZUL)
+            respuesta += colorear(termino['nombre'])
+            correccion = True
+        else:
+            respuesta_corregida += termino['nombre']
+            respuesta += termino['nombre']
+
+        respuesta_corregida += ' '
+        respuesta += ' '
+
+    # Muestra las respuestas con sus correcciones descartando las respuestas vacias
+    if (respuesta != ''):
+        if (correccion):
+            print(colorear('* \t') + respuesta)
+        else:
+            print(colorear('* \t', Color.AZUL) + respuesta)
+
+        print(colorear('-> \t', Color.RESALTAR) + respuesta_corregida)
+        print()
+
+
+def generar_archivo_evaluacion(preguntas, respuestas, url_local=True):
     with open('output/respuestas_evaluacion_errores.csv', newline='', mode='w') as errores_file:
         errores_writer = csv.writer(errores_file, delimiter='|', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         errores_writer.writerow(['Legajo alumno', 'IdExamen', 'IdPregunta', 'Respuesta Base', 'Respuesta Alumno',
@@ -311,39 +385,45 @@ def generar_archivo_evaluacion(preguntas, respuestas):
                 # Ver si esta implementado en la API
                 for pregunta in preguntas_correspondientes:
                     for respuestaBase in pregunta.v_respuestas:
-                        rqst = requests.post('http://localhost:8080/respuesta/evaluar', data =
-                        {'respuestaAlumno':pregunta.txt_inicio_res + ' ' + respuestaAlumno,
-                         'respuestaBase':pregunta.txt_inicio_res + ' ' + respuestaBase})
+                        request = {"respuestaAlumno":pregunta.txt_inicio_res + ' ' + respuestaAlumno,
+                         "respuestaBase":pregunta.txt_inicio_res + ' ' + respuestaBase}
 
-                        print("Ver Json: ", rqst.json())
-                        print("Status code", rqst.status_code)
-                        if rqst.status_code == 200:
+                        # print(colorear('Json enviado:', Color.RESALTAR) ,request)
+                        response = requests.post(url_servidor(url_local) + '/respuesta/evaluar', data = request)
+
+                        # print("Ver Json: ", response.json())
+                        if response.status_code == 200:
+                            print(colorear("Status code:", Color.RESALTAR), colorear(response.status_code, Color.AZUL))
 
                             # Si se proceso correctamente, va al archivo de calificacion
-                            calificacion = rqst.json()['datos']['calificacion']
+                            calificacion = response.json()['datos']['calificacion']
                             respuestas_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta,
                                                         respuestaBase, respuestaAlumno, calificacion])
 
-                            print(respuestaBase)
-                            print(respuestaAlumno)
-                            print(calificacion)
-                            print('\n')
+                            print(colorear('Respuesta base:', Color.RESALTAR), respuestaBase)
+                            print(colorear('Respuesta alumno:', Color.RESALTAR),
+                                  pregunta.txt_inicio_res + ' ' + respuestaAlumno)
+                            print(colorear('Calificacion:', Color.RESALTAR), calificacion)
+
                         else:
+                            print(colorear("Status code:", Color.RESALTAR), colorear(response.status_code, Color.ROJO))
                             # De lo contrario, al archivo de errores
-                            error_code = rqst.status_code
+                            error_code = response.status_code
                             
                             mensaje = ''
                             if error_code == 500:
-                                mensaje = rqst.json()['mensaje']
+                                mensaje = response.json()['mensaje']
 
                             errores_writer.writerow([entrada.id_alumno, entrada.id_examen, entrada.id_pregunta,
                                                      respuestaBase, respuestaAlumno, error_code, mensaje])
 
-                            print(respuestaBase)
-                            print(respuestaAlumno)
-                            print(error_code)
-                            print(mensaje)
-                            print('\n')
+                            print(colorear('Respuesta base:', Color.RESALTAR), respuestaBase)
+                            print(colorear('Respuesta alumno:', Color.RESALTAR), pregunta.txt_inicio_res + ' ' + respuestaAlumno)
+
+                            # print(error_code)
+                            # print(mensaje)
+                        print()
+
 
 # Grabar en BD de grafos
 
@@ -359,23 +439,24 @@ def grabar_respuesta_profesor_a_DB(pregunta):
         grabar_respuesta_a_DB(respuesta)
 
 
-def grabar_respuesta_a_DB(respuesta):
-    rqst = requests.post('http://localhost:8080/respuesta/corregir', data = {'respuesta':respuesta})
+def grabar_respuesta_a_DB(respuesta, url_local=True):
+    rqst = requests.post(url_servidor(url_local) + '/respuesta/corregir', data = {'respuesta':respuesta})
 
     print('\n\n' + respuesta)
 
     frase = ''
     elementos = []
 
-    print(rqst.json())
+    # print(rqst.json())
     terminos = rqst.json()['datos']['terminos']
 
-    print('Terminos:')
-    for termino in terminos:
-        print(termino)
+    # print('Terminos:')
+    # for termino in terminos:
+    #     print(termino)
 
-    print('Desglose')
+    print('Desglose:')
     last_tipo = ''
+    print(Color.AZUL.value + '[ ', end='')
     for termino in terminos:
         tipo = termino['tipo']
         if tipo == '':
@@ -397,22 +478,25 @@ def grabar_respuesta_a_DB(respuesta):
                 elementos.append([last_tipo, frase])
                 frase = ''
                 if tipo == 'C':
-                    print(') [ ', end='')
+                    print(') ' + Color.AZUL.value + '[ ', end='')
                 else:
-                    print('] ( ', end='')
+                    print(']' + Color.VERDE.value + ' ( ', end='')
 
             if termino['tipo'] != '':
                 print('_', end='')
+
             frase += termino['nombre'] + ' '
             print(termino['nombre'], end=' ')
 
             last_tipo = tipo
 
+    print(']' + Color.BLANCO.value, end='')
+
     elementos.append([last_tipo, frase])
 
     # Mostramos como los separamos
-    print('')
-    print(elementos)
+    print('\nElementos:')
+    print(elementos, end='')
 
 
     # Conceptos primero

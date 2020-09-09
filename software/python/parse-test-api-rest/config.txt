@@ -1,7 +1,9 @@
-Respuestas en texto:Preguntas.txt
-Todos los datos en archivo binario:./output/Examenes.bin
-Respuestas incorrectas ortograficamente:./output/ResIncOrt.txt
-Respuestas corregidas:./output/ResCorregidas.txt
-Preguntas Examen:Examen.txt
-Grabacion Respuestas:./output/Respuestas.txt
-Grabacion Preguntas:./output/Preguntas.txt
+Respuestas en texto:                        ~fd_res_txt~Preguntas.txt
+Todos los datos en archivo binario:         ~fd_todo_bin~./output/Examenes.bin
+Respuestas incorrectas ortograficamente:    ~fd_res_inc_ort~./output/ResIncOrt.txt
+Respuestas corregidas:                      ~fd_res_cor:~./output/ResCorregidas.txt
+Preguntas Examen:                           ~fd_examen~Examen.txt
+Grabacion Respuestas:                       ~fd_g_res_txt~./output/Respuestas.txt
+Grabacion Preguntas:                        ~fd_g_preg_txt~./output/Preguntas.txt
+Url Local:                                  ~url_local~http://localhost:8080
+Url del servidor en internet:               ~url_serv~http://sibila.website:8080
