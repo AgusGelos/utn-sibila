@@ -18,42 +18,21 @@
                 "--host-spacy", "localhost"
              ]*/
         },
-        /*
         {
             "type": "java",
-            "name": "CodeLens (Launch) - testEnv",
+            "name": "Debug MainWeb DOCKER ORIENT/SPACY",
             "request": "launch",
-            "mainClass": "testEnv",
+            "mainClass": "web.MainWeb",
+            "env": {
+                "SIBILA_ORIENT_HOST" : "http://172.28.1.1",
+                "SIBILA_SPACY_HOST"  : "http://172.28.1.2:5000"
+            },
             "projectName": "sibila"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch) - Current File - Params",
-            "request": "launch",
-            "mainClass": "${file}",
-            "args": [
+            /*"args": [
                 "-hodb", "localhost",
                 "--host-spacy", "localhost"
-             ]
+             ]*/
         },
-        {
-            "type": "java",
-            "name": "Debug (Launch) - Current File - Environment",
-            "request": "launch",
-            "mainClass": "${file}",
-            "env": {
-                "SIBILA_ORIENT_HOST" : "localhost",
-                "SIBILA_SPACY_HOST"  : "localhost"
-            }
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-MainVertexVector<sibila>",
-            "request": "launch",
-            "mainClass": "mainjframe.MainVertexVector",
-            "projectName": "sibila"
-        },
-        */
         {
             "type": "java",
             "name": "Debug frmMain <sibila>",

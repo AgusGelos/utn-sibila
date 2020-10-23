@@ -7,7 +7,7 @@ apply plugin: 'io.spring.dependency-management'
 
 
 group 'frc.utn.edu.ar'
-version '0.6-dev'
+version '0.7-dev'
 
 bootJar {
     mainClassName = 'web.MainWeb'

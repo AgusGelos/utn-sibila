@@ -33,6 +33,30 @@ hs_err_pid*
 *.blg
 *.toc
 
+# Archivos a ignorar para Python
+# Created by https://www.toptal.com/developers/gitignore/api/python
+# Edit at https://www.toptal.com/developers/gitignore?templates=python
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+# C extensions
+*.so
+# Flask stuff:
+instance/
+.webassets-cache
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
+
 # User-specific stuff:
 .idea/workspace.xml
 .idea/tasks.xml

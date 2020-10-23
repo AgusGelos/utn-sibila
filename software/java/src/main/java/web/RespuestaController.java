@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import web.RespuestaParams;
+import web.RespuestaSimpleParams;
 
 @RestController
 public class RespuestaController {
@@ -62,7 +63,10 @@ public class RespuestaController {
     }
 
         @RequestMapping(path="/respuesta/corregir", method=RequestMethod.POST)
-    public ResponseEntity corregirRespuesta(@RequestParam("respuesta") String respuestaText)  {
+    public ResponseEntity corregirRespuesta(
+        @RequestBody RespuestaSimpleParams params){
+
+        String respuestatxt = params.respuesta;
 
         RespuestaHttp respuestaHttp = new RespuestaHttp();
 
@@ -76,9 +80,7 @@ public class RespuestaController {
 
         HashMap<String, Object> respuestaMap = new HashMap<>();
 
-        Respuesta respuesta = new Respuesta(respuestaText);
-
-
+        Respuesta respuesta = new Respuesta(respuestatxt);
 
         try{
             respuesta = grammarManager.corregirRespuesta(respuesta);

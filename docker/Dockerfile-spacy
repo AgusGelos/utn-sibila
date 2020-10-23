@@ -15,22 +15,27 @@ RUN mkdir -p /var/www \
     && pip3 install -U pip
 
 # spacy
-RUN \
-    pip install -U jieba \
+RUN apt install -y python-dev libhunspell-dev \
+    && pip3 install --prefix=/install --ignore-installed \
         ipython \
         pandas \
         requests \
         chardet \
-        spacy==${SPACY_VERSION} \
-    && python3 -m spacy download es_core_news_sm \
-    && apt install -y python-dev libhunspell-dev
+        hunspell
 
-COPY ./spacy_server/requirements.txt ./requirements.txt 
+# COPY ./spacy_server/requirements.txt ./requirements.txt 
 
-RUN pip3 install --prefix=/install --ignore-installed -Ur requirements.txt
+# RUN pip3 install --prefix=/install --ignore-installed -Ur requirements.txt
 
 # Runtime base image
 FROM python:3.6-slim-buster
+
+#RUN pip3 install spacy && python3 -m spacy download es_core_news_sm
+
+RUN pip3 install \
+    	flask \
+    	spacy \
+    && python3 -m spacy download es_core_news_sm
 
 # Installing escential libraries for runtime env
 RUN apt update \

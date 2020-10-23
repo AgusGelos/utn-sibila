@@ -2,7 +2,7 @@ FROM openjdk:8-alpine
 
 MAINTAINER Martin Casatti (mcasatti@gmail.com)
 
-COPY ./software/java/build/libs/sibila-0.6-dev.jar ./sibilar.jar
+COPY ./software/java/build/libs/sibila-0.7-dev.jar ./sibilar.jar
 
 EXPOSE 8080
 
