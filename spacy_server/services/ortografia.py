@@ -7,7 +7,8 @@ class Ortografia:
     def __init__(self):
         ruta_recursos = BASE_DIR + "/res/hunspell-es/"
         print(ruta_recursos)
-        self.dic = hunspell.HunSpell(ruta_recursos + "es_ANY.dic", ruta_recursos + "es_ANY.aff")
+        #self.dic = hunspell.Hunspell(ruta_recursos + "es_ANY.dic", ruta_recursos + "es_ANY.aff")
+        self.dic = hunspell.Hunspell(ruta_recursos + "es_ANY")
 
     def corregir(self, texto):
 
