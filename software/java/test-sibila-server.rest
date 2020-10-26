@@ -1,5 +1,5 @@
 
-POST http://172.28.0.1:5000/correccion HTTP/1.1
+POST http://172.28.1.2:5000/correccion HTTP/1.1
 content-type: application/json
 
 {
@@ -8,7 +8,7 @@ content-type: application/json
 
 ###
 
-GET http://172.28.0.1:8080/conceptos HTTP/1.1
+GET http://localhost:8080/conceptos HTTP/1.1
 content-type: application/json
 
 {

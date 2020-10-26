@@ -31,7 +31,7 @@ services:
       - '8080:8080'
     environment:
       - SIBILA_ORIENT_HOST=172.28.1.1
-      - SIBILA_SPACY_HOST=172.28.1.2
+      - SIBILA_SPACY_HOST=http://172.28.1.2
     depends_on:
       - orientdb
       - spacy

@@ -11,7 +11,7 @@
             "mainClass": "${file}",
             "env": {
                 "SIBILA_ORIENT_HOST" : "http://172.17.0.2",
-                "SIBILA_SPACY_HOST"  : "http://172.17.0.3:5000"
+                "SIBILA_SPACY_HOST"  : "http://172.17.0.3"
             },
             /*"args": [
                 "-hodb", "localhost",
@@ -25,7 +25,22 @@
             "mainClass": "web.MainWeb",
             "env": {
                 "SIBILA_ORIENT_HOST" : "http://172.28.1.1",
-                "SIBILA_SPACY_HOST"  : "http://172.28.1.2:5000"
+                "SIBILA_SPACY_HOST"  : "http://172.28.1.2"
+            },
+            "projectName": "sibila"
+            /*"args": [
+                "-hodb", "localhost",
+                "--host-spacy", "localhost"
+             ]*/
+        },
+        {
+            "type": "java",
+            "name": "Debug MainWeb ORIENT/SPACY",
+            "request": "launch",
+            "mainClass": "web.MainWeb",
+            "env": {
+                "SIBILA_ORIENT_HOST" : "172.17.0.2",
+                "SIBILA_SPACY_HOST"  : "http://172.17.0.3"
             },
             "projectName": "sibila"
             /*"args": [
@@ -47,7 +62,7 @@
             "mainClass": "web.MainWeb",
             "env": {
                 "SIBILA_ORIENT_HOST" : "172.17.0.2",
-                "SIBILA_SPACY_HOST"  : "http://172.17.0.3:5000"
+                "SIBILA_SPACY_HOST"  : "http://172.17.0.3"
             },
             "projectName": "sibila"
         }

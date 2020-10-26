@@ -56,8 +56,8 @@ public class RespuestaController {
     public ResponseEntity getVersion() {
         RespuestaHttp respuesta = new RespuestaHttp();
         respuesta.tipoOk();
-        respuesta.setMensaje("Prueba de concepto");
-        respuesta.agregarDato("version", "1.0.0");
+        respuesta.setMensaje("Sibila API");
+        respuesta.agregarDato("version", "0.7");
 
         return respuesta.getRespuestaHttp();
     }

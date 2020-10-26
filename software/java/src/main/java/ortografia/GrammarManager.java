@@ -51,7 +51,7 @@ public class GrammarManager {
         // respuesta = lt.CheckRespuesta(respuesta, cm.getConceptosComplejos(), cm.getRelacionesComplejas());
         try {
             String recurso = "/correccion";
-            URL url = new URL(Config.HOST_SPACY + recurso);
+            URL url = new URL(Config.HOST_SPACY + ":5000" + recurso);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
             con.setDoOutput(true);
@@ -123,7 +123,7 @@ public class GrammarManager {
 
         try {
             String recurso = "/tokenizacion";
-            URL url = new URL(Config.HOST_SPACY + recurso);
+            URL url = new URL(Config.HOST_SPACY + ":5000" + recurso);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
             con.setDoOutput(true);

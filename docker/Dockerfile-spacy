@@ -21,7 +21,7 @@ RUN apt install -y python-dev libhunspell-dev \
         pandas \
         requests \
         chardet \
-        hunspell
+        cyhunspell
 
 # COPY ./spacy_server/requirements.txt ./requirements.txt 
 
