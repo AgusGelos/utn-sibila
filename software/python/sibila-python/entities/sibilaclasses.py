@@ -50,7 +50,6 @@ class Termino:
 class Respuesta (Termino):
     pass
 
-
 class Concepto (Termino):
     ID: str
     Usuario: str
@@ -59,12 +58,11 @@ class Concepto (Termino):
     def __init__ (self, nombre: str, vista: str=None):
         super().__init__(nombre,vista)
 
-
-
 class Relacion:
     ID: str
     Usuario: str
     Actualizado = None
+    Class: str
 
-    def __init__ (self, nombre: str, vista: str=None):
-        super().__init__(nombre,vista)
+    def __init__ (self, classname: str):
+        self.Class = classname

@@ -35,14 +35,32 @@ class DBManager:
 
     def __getWhereFromDict__ (self, keys : Dict):
         condition = ""
+        for key,value in keys.items():
+            if condition:
+                condition = condition + " and "
+            # Ajustar el value para que si es un string se le agreguen comillas simples
+            if isinstance(value,str):
+                value = "'{}'".format(value)
+            condition = condition + key + " = " + value
+        '''
         condition = parse.urlencode(keys)
         condition = condition.replace ("&"," AND ").replace("%27","'").replace("+"," ")
+        '''
         return condition
 
     def __getFieldsFromDict__ (self, fields : Dict):
         flds = ""
+        for field,value in fields.items():
+            if flds:
+                flds = flds + ", "
+            # Ajustar el value para que si es un string se le agreguen comillas simples
+            if isinstance(value,str):
+                value = "'{}'".format(value)
+            flds = flds + field + " = " + value
+        '''
         flds = parse.urlencode(fields)
         flds = flds.replace ("&",",").replace("%27","'").replace("+"," ")
+        '''
         return flds
 
     def extractResult (self, response: requests.Response):
@@ -56,33 +74,30 @@ class DBManager:
         id = json_res[0]["@rid"]
         return id
 
+    def extractCount (self, result: str):
+        json_res = result #json.loads(result)
+        id = json_res[0]["count"]
+        return id
+
     def execQuery (self,query : str) -> str:
-        """Ejecuta la consulta pasada por parámetro y devuelve los datos en formato JSON.
-        Args:
-            query (string): Query a ejecutar
-        Returns:
-            string: JSON con los datos devueltos
-        """    
-        req_query = parse.urljoin(self.getURL,query)
-        response = requests.get(req_query, auth=HTTPBasicAuth(self.user, self.password))
-        if (response.ok):
-            # Convertir la cadena de bytes en un string, con encode utf-8
-            parsed = json.loads(response.content.decode("utf-8"))
-            # el response tiene un elemento llamado result, que contiene los valores devueltos
-            result = parsed['result']
-        else:
-            result = None
-        return result
+        '''
+        Se redirecciona a execCommand, que utiliza un comando POST con los parámetros en el Body
+        del Request debido a que el GET utilizado por los querys de consulta (SELECT) pasan los
+        parámetros en la URL y eso a veces trae problemas con caracteres especiales y algunos tipos
+        de datos
+        '''
+        return self.execCommand(command=query)
     
     def execCommand (self,command:str):
         payload = {"command" : command}
-        logging.info ("{url} - {method} - {payload}".format(url=self.commandURL,method="DEL",payload=payload))
+        logging.info ("{url} - {method} - {payload}".format(url=self.commandURL,method="POST",payload=payload))
         response = requests.post(self.commandURL,json=payload,auth=HTTPBasicAuth(self.user,self.password))
         if (not response.ok):
             logging.error (response.status_code, response.reason, response.text)
             return None
         else:
-            return self.extractResult(response)
+            result = self.extractResult(response)
+            return result
 
     def getVertex (self, classname : str, keys : Dict):
         condition = self.__getWhereFromDict__(keys)
@@ -98,7 +113,8 @@ class DBManager:
     def insVertex (self, classname : str, fields : Dict):
         flds = self.__getFieldsFromDict__(fields)
         command = "CREATE VERTEX {classname} SET {fields}".format(classname=classname,fields=flds)
-        return self.execCommand(command)
+        result = self.execCommand(command)
+        return result
 
     def delVertex (self, classname : str, keys : Dict):
         # Buscar los registro de la clase que cumplan con las claves
