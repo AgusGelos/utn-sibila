@@ -219,8 +219,34 @@ class ConceptManager:
         pass
 
     def insStruct (self,conceptoOrigen : Concepto, relacion : Relacion, conceptoDestino : Concepto):
-        pass
-        # TODO: Insertar una estructura, creando todos los elementos necesarios
+        '''Inserta una estructura completa C -> R -> C, creando las entidades que no existan
+        '''
+        result = None
+        # La posible creacion del tipo de relacion se debe hacer fuera de la transacción sino no funciona
+        if not self.existTipoRelacion(tipo = relacion.Class):
+            result = self.addTipoRelacion(nombreTipo=relacion.Class)
+            if not result:
+                return result
+        
+        script = """
+LET concepto_origen = SELECT from Concepto where Nombre = '{origen}'.toUpperCase();
+if ($concepto_origen.size() = 0) {{
+    LET concepto_origen = CREATE VERTEX Concepto SET Nombre = '{origen}'.toUpperCase();
+}}
+LET concepto_destino = SELECT from Concepto where Nombre = '{destino}'.toUpperCase();
+if ($concepto_destino.size() = 0) {{
+    LET concepto_destino = CREATE VERTEX Concepto SET Nombre = '{destino}'.toUpperCase();
+}}
+LET relacion = match
+            {{class:Concepto, as: c1, where: (Nombre.toUpperCase() = '{origen}'.toUpperCase())}}.out('{relacion}') 
+            {{class:Concepto, as: c2, where: (Nombre.toUpperCase() = '{destino}'.toUpperCase())}} return a;
+if ($relacion.size() = 0) {{
+    CREATE EDGE {relacion} FROM $concepto_origen TO $concepto_destino RETRY 100;
+}}
+"""
+        script = script.format(origen=conceptoOrigen.Nombre,relacion=relacion.Class,destino=conceptoDestino.Nombre)
+        result = self.db.execBatch(execScript = script)
+        return result
 
     def existStruct (self,conceptoOrigen : Concepto, relacion : Relacion, conceptoDestino : Concepto) -> bool:
         query = "match {{class: Concepto, as: c1, where:(Nombre = '{c1}')}}.out('{r}') " \
@@ -229,7 +255,7 @@ class ConceptManager:
         result = self.db.execQuery(query)
         count = result[0]['count']        
         return (count == 1)
-        
+
     def existConcepto (self,concepto : str) -> bool:
         result = self.getConceptoByName(concepto)
         if result:

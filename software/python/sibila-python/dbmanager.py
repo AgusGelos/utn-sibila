@@ -135,7 +135,12 @@ class DBManager:
         operaciones = [{"type":"script","language":"sql","script":[script]}]
         data = {"transaction":True,"operations":operaciones}
         response = requests.post(self.batchURL,json=data,auth=HTTPBasicAuth(self.user, self.password))
-        return response
+        if (not response.ok):
+            logging.error (response.status_code, response.reason, response.text)
+            return None
+        else:
+            result = self.extractResult(response)
+            return result
 
     def insEdge (self, sourceClass : str, sourceCondition : Dict, destClass : str, destCondition : Dict, edgeClass : str):
         outCondition = self.__getWhereFromDict__(sourceCondition)

@@ -9,11 +9,10 @@ def main():
     cm = ConceptManager()
     
     try:
-        ##result = cm.getConceptosComplejos()
-        c1 = Concepto(nombre="PARADIGMA")
-        c2 = Concepto(nombre="POO")
-        r = Relacion(classname="Coso")
-        result = cm.existStruct(conceptoOrigen=c1,relacion=r,conceptoDestino=c2)
+        c1 = Concepto(nombre="TRES")
+        c2 = Concepto(nombre="UNO")
+        r = Relacion(classname="Ultraviolento")
+        result = cm.insStruct(conceptoOrigen=c1,relacion=r,conceptoDestino=c2)
         inspect(result)
     except Exception as e:
         inspect (e)
