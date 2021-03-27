@@ -1,6 +1,5 @@
 import requests
 
-from app.ortography.models import Answer
 from config.urls import URL
 
 
