@@ -3,16 +3,19 @@ from typing import Dict, List,Tuple
 from dbmanager import DBManager
 from entities.sibilaclasses import *
 import re
+import json
 
-class ConceptManager:
+class KnowledgeManager:
     db : DBManager = None
+    db2: DBManager = None
     """
     Concept Manager:
     Clase que engloba todas las operaciones de gestión de conceptos y relaciones en OrientDB
     """
-    def __init__ (self, host='http://localhost', port=2480, database='PPR', user='admin', password='admin'):        
-        self.db = DBManager(host,port,database,user,password)
-
+    def __init__ (self, host='http://localhost', port=2480, database='PPR', user='admin', password='admin', database2=None, user2=None, password2=None):        
+        self.db = DBManager(host=host,port=port,database=database,user=user,password=password)
+        if database2:
+            self.db2 = DBManager(host=host,port=port,database=database2,user=user2,password=password2)
     '''
     Los VERBOS de la gestión de la base de datos van a ser:
     INS: Insertar un nuevo registro
@@ -20,6 +23,12 @@ class ConceptManager:
     UPD: Modificar un registro existente
     GET: Obtener información
     '''
+
+    '''
+    -----------------------------------------------------------------------------------------
+    TODO: TODOS LOS METODOS QUE INSERTEN O ACTUALICEN INFORMACION DE ENTIDADES DEBEN DEVOLVER
+    EN EL RETORNO, UN OBJETO CON LOS DATOS ACTUALIZADOS
+    ''' 
 
     #--------------------------------------------------------------------------------------------
     # GESTION DE CONCEPTOS
@@ -281,26 +290,83 @@ if ($relacion.size() = 0) {{
     #--------------------------------------------------------------------------------------------
     # CONSULTAS ESPECIFICAS Y METODOS ASOCIADOS
     # --------------------------------------------------------------------------------------------
-    def buildRouteQuery (self,conceptoInicial : Concepto, conceptosIncluidos : List) -> str: 
-        pass
-        # TODO: Construir el texto de la query que devuelve una ruta determinada por el concepto inicial y los conceptos incluidos
+    def buildPathQuery (self,conceptoInicial : Concepto, conceptosIncluidos : List) -> str: 
+        """Devuelve una ruta a partir de un nodo raiz y una lista de conceptos.
+        La funcion recibe un nodo raíz (string) y una lista de conceptos (list(strings)) y
+        devuelve el query que al ejecutarse devuelve esos datos.
+        Establece una profundidad máxima igual a la cantidad de conceptos relacionados
+        para evitar loops infinitos en caso de haber ciclos en la ruta
+        Args:
+            root (string): Nombre del nodo raiz para iniciar la búsqueda
+            concepts (list): Lista de strings con los nombres de los nodos a buscar
+        Returns:
+            string: JSON con los datos encontrados
+        """    
+        conceptos = conceptosIncluidos
+        conceptos.insert(0,conceptoInicial.Nombre)
 
-    def buildRouteDepth (self,conceptoInicial : Concepto, profundidad : int) -> str:
-        pass
-        # TODO: Construir el texto de la query que devuelve una ruta determinada por el concepto inicial y los conceptos hasta una profundidad dada
+        max_len = len(conceptos)
+        concept_list = json.dumps(conceptos)
+        concept_list = concept_list.replace('"',"'")
+        query_route = """select FROM (
+        MATCH {{class: Concepto, where: (Nombre = '{root}')}}.out()
+            {{class: Concepto, as: dest, 
+                while: (
+                ($depth < {profundidad}) and 
+                (Nombre IN {conceptos_incluidos})
+                ),
+                where: (
+                Nombre IN {conceptos_incluidos}
+                )
+            }} 
+        RETURN 
+            DISTINCT 
+            dest.@rid as idConcepto,
+            dest.Nombre as Concepto,  
+            dest.out() as idConceptosRelacionados, 
+            dest.outE().@class as Relaciones, 
+            dest.out().Nombre as ConceptosRelacionados
+        )""".format(root=conceptoInicial.Nombre,profundidad=max_len,conceptos_incluidos=concept_list)
+        return query_route
 
-    def getRoute (self,conceptoInicial : Concepto, conceptosIncluidos : List):
-        pass
-        # TODO: Devolver la ruta que hay entre un concepto inicial y que contenga los conceptos incluidos
+    def buildPathDepth (self,conceptoInicial : Concepto, profundidad : int) -> str:
+        """Devuelve un nodo y todas sus relaciones hasta un nivel determinado
+        La función recibe un nodo raíz (string) y una profundidad determinada y devuelve
+        el query que al ejecutar obtiene esos datos.
+        Args:
+            root (string): Nombre del nodo raiz para iniciar la búsqueda
+            depth (int): Profundidad máxima para la búsqueda de relaciones
+        Returns:
+            string: JSON con los datos del resultado
+        """    
+        query_conceptos_depth = """select FROM ( 
+        MATCH {{class: Concepto, where: (Nombre = '{root}')}}.out() 
+            {{class: Concepto, as: dest, while: ($depth < {profundidad})}} 
+        RETURN 
+            dest.@rid as idConcepto,
+            dest.Nombre as Concepto,  
+            dest.out() as idConceptosRelacionados, 
+            dest.outE().@class as Relaciones, 
+            dest.out().Nombre as ConceptosRelacionados
+        )""".format(root=conceptoInicial.Nombre,profundidad=profundidad)
+        return query_conceptos_depth
+        
+    def getPath (self,conceptoInicial : Concepto, conceptosIncluidos : List):
+        query = self.buildPathQuery(conceptoInicial=conceptoInicial,conceptosIncluidos=conceptosIncluidos)
+        result = self.db.execCommand(command=query)
+        return result
 
-    def getRouteRespuesta (self,respuesta : Respuesta):
-        pass
+    def getPathRespuesta (self,respuesta : Respuesta):
         # TODO: Devolver la ruta correspondiente a los nodos de una respuesta
-
-    def getRoutesFrom (self,conceptoInicial : Concepto, profundidad : int):
         pass
-        # TODO: Devolver la ruta que inicie en un concepto y que incluya todos los conceptos hasta una profundidad indicada
 
-    def getRoutesByType (self,relacion : Relacion):
-        pass
+    def getPathsFrom (self,conceptoInicial : Concepto, profundidad : int):
+        query = self.buildPathDepth(conceptoInicial=conceptoInicial,profundidad=profundidad)
+        result = self.db.execCommand(command=query)
+        return result
+
+    def getPathsByType (self,relacion : Relacion):
         # TODO: Devuelve todas las rutas, con sus conceptos, de un tipo indicado
+        query = "select from Concepto where out('{relname}').size() > 0 or in('{relname}').size() > 0".format(relname=relacion.Class)
+        result = self.db.execCommand(query)
+        return result

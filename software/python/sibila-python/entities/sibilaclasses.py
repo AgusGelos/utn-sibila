@@ -1,6 +1,37 @@
 from typing import List
+from typing import Optional
+from enum import Enum
+from pydantic import BaseModel
+
+class TipoTermino(str,Enum):
+    CONCEPTO = 'C'
+    RELACION = 'R'
+    IGNORAR = 'I'
+
+class Termino(BaseModel):
+    Nombre: str
+    Vista: Optional[str]
+    Peso: Optional[float]
+    
+    #def __init__ (self, nombre: str, vista: str=None):
+    #    self.Nombre = nombre
+    #    self.Vista = nombre if vista is None else vista 
+    #    self.Peso = 1
+
+class Equivalencia(BaseModel):
+    Nombre: str
+    Peso: float
+
+class Concepto(Termino):
+    rid: Optional[str]
+    equivalencias: Optional[List[Equivalencia]]
+    tipo_termino = TipoTermino.CONCEPTO
+    
+    #def __init__ (self, nombre: str, vista: str=None):
+    #    super().__init__(nombre,vista)
 
 
+'''
 class Termino:
     TIPO_CONCEPTO = "C"
     TIPO_RELACION = "R"
@@ -46,23 +77,26 @@ class Termino:
 
     def toStringDelta(self):
         return "[%s Δ=%d]" % (self.Nombre,self.Delta)
+'''
 
 class Respuesta (Termino):
     pass
 
+'''
 class Concepto (Termino):
     ID: str
     Usuario: str
-    Actualizado = None
+    Actualizado:str = None
 
     def __init__ (self, nombre: str, vista: str=None):
         super().__init__(nombre,vista)
-
-class Relacion:
-    ID: str
-    Usuario: str
-    Actualizado = None
+'''
+class Relacion(Termino):
+    rid: Optional[str]
+    Usuario: Optional[str]
+    Actualizado: Optional[str]
     Class: str
+    tipo_termino = TipoTermino.RELACION
 
-    def __init__ (self, classname: str):
-        self.Class = classname
+    #def __init__ (self, classname: str):
+    #    self.Class = classname

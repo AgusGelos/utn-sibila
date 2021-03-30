@@ -1,19 +1,28 @@
 import logging
 from dbmanager import DBManager
 from entities.sibilaclasses import *
-from conceptmanager import ConceptManager 
+from knowledgemanager import KnowledgeManager 
 from rich import print,inspect
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    cm = ConceptManager()
+    km = KnowledgeManager()
     
     try:
-        c1 = Concepto(nombre="TRES")
-        c2 = Concepto(nombre="UNO")
-        r = Relacion(classname="Ultraviolento")
-        result = cm.insStruct(conceptoOrigen=c1,relacion=r,conceptoDestino=c2)
-        inspect(result)
+        
+        c1 = Concepto(Nombre="PARADIGMA")
+        conceptos = ['MODELO','DISEÑO','PROGRAMA','OBJETO']
+
+        result = km.getPath(conceptoInicial=c1,conceptosIncluidos=conceptos)
+        print (result)
+
+        result = km.getPathsFrom(conceptoInicial=c1,profundidad=1)
+        print (result)
+        '''
+        result = cm.getPathsByType(relacion=Relacion('EsUn'))
+        print (result)
+        '''
+        # inspect(query)
     except Exception as e:
         inspect (e)
 
