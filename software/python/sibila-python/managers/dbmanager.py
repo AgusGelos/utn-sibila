@@ -1,11 +1,27 @@
-from typing import Dict
+from re import UNICODE
+from typing import Dict, Tuple
 import requests
 from urllib import parse
 from requests import auth
 from requests.auth import HTTPBasicAuth
 import json
-from entities.sibilaclasses import *
+from entities.graphclasses import *
 import logging
+from rich.logging import RichHandler
+# TODO: Corregir este import que falla
+#import ftfy
+
+class DBException (Exception):
+    reason : int = None
+    code : int = None
+    message : str = None
+    def __init__ (self,reason=500,code=500,message="Database error"):
+        self.reason = reason
+        self.code = code
+        self.message = message
+        #self.message = ftfy.fixes.fix_line_breaks(message)
+        #self.message = ftfy.fixes.decode_escapes(self.message)
+        super().__init__(self.message)
 
 class DBManager:
     host = None
@@ -19,6 +35,8 @@ class DBManager:
     batchURL = None
     documentURL = None
     commandURL = None
+
+    log = None
     
     def __init__ (self, host='http://localhost', port=2480, database='PPR', user='admin', password='admin'):
         self.host = host
@@ -33,7 +51,9 @@ class DBManager:
         self.documentURL = parse.urljoin(self.baseURL,"/document/"+self.database)
         self.commandURL = parse.urljoin(self.baseURL,"/command/"+self.database+"/sql")
 
-    def __getWhereFromDict__ (self, keys : Dict):
+        self.log = logging.getLogger("rich")
+
+    def __getWhereFromDict__ (self, keys : Dict) -> str:
         condition = ""
         for key,value in keys.items():
             if condition:
@@ -48,7 +68,7 @@ class DBManager:
         '''
         return condition
 
-    def __getFieldsFromDict__ (self, fields : Dict):
+    def __getFieldsFromDict__ (self, fields : Dict) -> str:
         flds = ""
         for field,value in fields.items():
             if flds:
@@ -63,18 +83,18 @@ class DBManager:
         '''
         return flds
 
-    def extractResult (self, response: requests.Response):
+    def extractResult (self, response: requests.Response) -> str:
         parsed = json.loads(response.content.decode("utf-8"))
         # el response tiene un elemento llamado result, que contiene los valores devueltos
         result = parsed['result']
         return result
 
-    def extractId (self, result: str):
+    def extractId (self, result: str) -> str:
         json_res = result #json.loads(result)
         id = json_res[0]["@rid"]
         return id
 
-    def extractCount (self, result: str):
+    def extractCount (self, result: str) -> str:
         json_res = result #json.loads(result)
         id = json_res[0]["count"]
         return id
@@ -88,47 +108,51 @@ class DBManager:
         '''
         return self.execCommand(command=query)
     
-    def execCommand (self,command:str):
+    def execCommand (self,command:str) -> str:
         payload = {"command" : command}
-        logging.info ("{url} - {method} - {payload}".format(url=self.commandURL,method="POST",payload=payload))
+        self.log.info ("{url} - {method} - {payload}".format(url=self.commandURL,method="POST",payload=payload))
         response = requests.post(self.commandURL,json=payload,auth=HTTPBasicAuth(self.user,self.password))
         if (not response.ok):
-            logging.error (response.status_code, response.reason, response.text)
-            return None
+            self.log.error ("{status} - {reason}: {text}".format(status=response.status_code,reason=response.reason,text=response.text))
+            raise DBException(response.reason,response.status_code,response.text)
         else:
             result = self.extractResult(response)
             return result
 
-    def getVertex (self, classname : str, keys : Dict):
+    def getVertex (self, classname : str, keys : Dict) -> str:
         condition = self.__getWhereFromDict__(keys)
         query = "MATCH {{class: {classname}, as: r, where: ({condition})}} return expand(r)".format(classname=classname,condition=condition)
         req_query = parse.urljoin(self.getURL,query)
         response = requests.get(req_query, auth=HTTPBasicAuth(self.user, self.password))
         if (not response.ok):
-            logging.error (response.status_code, response.reason, response.text)
-            return None
+            self.log.error ("{status} - {reason}: {text}".format(status=response.status_code,reason=response.reason,text=response.text))
+            raise DBException(response.reason,response.status_code,response.text)
         else:
             return self.extractResult(response)
 
-    def insVertex (self, classname : str, fields : Dict):
+    def insVertex (self, classname : str, fields : Dict) ->Tuple[str,int]:
         flds = self.__getFieldsFromDict__(fields)
         command = "CREATE VERTEX {classname} SET {fields}".format(classname=classname,fields=flds)
         result = self.execCommand(command)
-        return result
+        if result:
+            id = self.db.extractId(result)
+        else:
+            id = None
+        return result,id
 
-    def delVertex (self, classname : str, keys : Dict):
+    def delVertex (self, classname : str, keys : Dict) -> str:
         # Buscar los registro de la clase que cumplan con las claves
         condition = self.__getWhereFromDict__(keys)
         command = "DELETE VERTEX {classname} WHERE {condition}".format(classname=classname,condition=condition)
         return self.execCommand(command)
 
-    def updVertex (self, classname : str, keys : Dict, fields : Dict):
+    def updVertex (self, classname : str, keys : Dict, fields : Dict) -> str:
         flds = self.__getFieldsFromDict__(fields)
         where = self.__getWhereFromDict__(keys)
         command = "UPDATE {classname} SET {fields} WHERE {condition}".format(classname=classname,fields=flds,condition=where)
         return self.execCommand(command)
 
-    def execBatch (self,execScript : str):
+    def execBatch (self,execScript : str) -> str:
         script = """BEGIN;
         {execScript}
         COMMIT;""".format(execScript = execScript)
@@ -136,13 +160,13 @@ class DBManager:
         data = {"transaction":True,"operations":operaciones}
         response = requests.post(self.batchURL,json=data,auth=HTTPBasicAuth(self.user, self.password))
         if (not response.ok):
-            logging.error (response.status_code, response.reason, response.text)
-            return None
+            self.log.error ("{status} - {reason}: {text}".format(status=response.status_code,reason=response.reason,text=response.text))
+            raise DBException(response.reason,response.status_code,response.text)
         else:
             result = self.extractResult(response)
             return result
 
-    def insEdge (self, sourceClass : str, sourceCondition : Dict, destClass : str, destCondition : Dict, edgeClass : str):
+    def insEdge (self, sourceClass : str, sourceCondition : Dict, destClass : str, destCondition : Dict, edgeClass : str) -> str:
         outCondition = self.__getWhereFromDict__(sourceCondition)
         inCondition = self.__getWhereFromDict__(destCondition)
         command = "CREATE EDGE {edgeClass} FROM (SELECT FROM {sourceClass} WHERE {sourceCondition}) TO (SELECT FROM {destClass} WHERE {destCondition})".format(
@@ -150,7 +174,7 @@ class DBManager:
         )
         return self.execCommand(command)
 
-    def delEdge (self, sourceClass : str, sourceCondition : Dict, destClass : str, destCondition : Dict, edgeClass : str):
+    def delEdge (self, sourceClass : str, sourceCondition : Dict, destClass : str, destCondition : Dict, edgeClass : str) -> str:
         outCondition = self.__getWhereFromDict__(sourceCondition)
         inCondition = self.__getWhereFromDict__(destCondition)
         command = "DELETE EDGE {edgeClass} FROM (SELECT FROM {sourceClass} WHERE {sourceCondition}) TO (SELECT FROM {destClass} WHERE {destCondition})".format(

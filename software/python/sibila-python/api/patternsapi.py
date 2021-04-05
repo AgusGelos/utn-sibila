@@ -1,0 +1,2 @@
+class PatternsAPI:
+    pass

@@ -1,7 +1,7 @@
 
 from typing import Dict, List,Tuple
-from dbmanager import DBManager
-from entities.sibilaclasses import *
+from .dbmanager import DBManager
+from entities.graphclasses import *
 import re
 import json
 
@@ -34,16 +34,12 @@ class KnowledgeManager:
     # GESTION DE CONCEPTOS
     # --------------------------------------------------------------------------------------------
     def insConcepto (self,concepto : Concepto) -> Tuple[str,int]:
-        result = self.db.insVertex(
+        result,id = self.db.insVertex(
             classname="Concepto",
             fields={
                 "Nombre":concepto.Nombre
                 }
             )
-        if result:
-            id = self.db.extractId(result)
-        else:
-            id = None
         return result,id
 
     def updConcepto (self,oldConcepto : Concepto,newConcepto : Concepto) -> Tuple[str, int]:

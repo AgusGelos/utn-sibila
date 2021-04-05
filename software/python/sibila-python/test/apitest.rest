@@ -1,0 +1,17 @@
+GET http://localhost:8000/conceptos
+
+{
+    "filter" : [
+        "Nombre" : "POO",
+        "Prueba" : "Otro campo"
+    ],
+    "limit" : 5
+}
+###
+
+GET http://localhost:8000/docs
+###
+
+GET http://localhost:8000/openapi.json
+###
+

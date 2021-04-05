@@ -1,0 +1,2 @@
+class PatternsManager:
+    pass
